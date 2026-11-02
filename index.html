@@ -138,6 +138,8 @@ button{font:inherit;color:inherit}
 
 /* ---------- the opening: the whole window, the lockup set into stone ---------- */
 .hero{position:absolute;left:0;right:0;top:0;height:var(--lv,100lvh);overflow:hidden;z-index:2;will-change:opacity}
+@keyframes heroOut{from{opacity:1}to{opacity:0}}
+.sda .hero{animation:heroOut linear both;animation-timing-function:cubic-bezier(.3,0,.6,1);animation-timeline:scroll();animation-range:0px var(--heroEnd,300px)}
 .p3,.caps{z-index:3}
 .quake{position:absolute;inset:0}
 .hero canvas{position:absolute;left:0;top:0;pointer-events:none}
@@ -529,6 +531,8 @@ button{font:inherit;color:inherit}
   // the scroller: the window, or on iPhone and iPad the page's own frame
   const SC = R.classList.contains('inner') ? D.getElementById('page') : null, scroller = SC || window;
   const getY = () => SC ? SC.scrollTop : scrollY, goY = o => scroller.scrollTo(o);
+  const SDA = !!(window.CSS && CSS.supports('animation-timeline: scroll()') && CSS.supports('animation-range: 0px 100px')) && !/[?&]nosda\b/.test(location.search);
+  if (SDA) R.classList.add('sda');
   // The motion plays on every device. Where the system asks for less motion it is gentler, not gone: no jolt, no flying
   // chips, no parallax, a shorter drop (his Mac has Reduce Motion on and he wants the computer to show it, 2026-11-02)
   let calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -939,13 +943,14 @@ button{font:inherit;color:inherit}
   const DUR = 1000, IO = 'cubic-bezier(.45,0,.55,1)';
   let scrub = null, heroGone = false;
   function makeScrub() {
-    if (scrub) Object.values(scrub).forEach(a => a.cancel());
+    if (scrub) Object.values(scrub).forEach(a => a && a.cancel());
+    R.style.setProperty('--heroEnd', Math.round(G.I * 0.5) + 'px');
     const mk = (el, kf) => { const a = el.animate(kf, { duration: DUR, fill: 'both' }); a.pause(); a.currentTime = 0; return a; };
     // it starts below the window, so nothing shows until it glides in (a short glide and a fade where less motion is asked)
     const glide = calm ? G.sv * 0.12 : G.lv - G.phT + 60, Z = ' translateZ(' + (-G.depth).toFixed(1) + 'px)';
     const low = 'translate3d(0,' + glide.toFixed(1) + 'px,0)';
     scrub = {
-      hero: mk(hero, [{ offset: 0, opacity: 1, easing: 'cubic-bezier(.3,0,.6,1)' }, { offset: .5, opacity: 0 }, { offset: 1, opacity: 0 }]),
+      hero: SDA ? null : mk(hero, [{ offset: 0, opacity: 1, easing: 'cubic-bezier(.3,0,.6,1)' }, { offset: .5, opacity: 0 }, { offset: 1, opacity: 0 }]),
       p3: mk(p3, [{ offset: 0, transform: low, opacity: calm ? 0 : 1 }, { offset: .2, transform: low, opacity: calm ? 0 : 1, easing: IO }, { offset: 1, transform: 'translate3d(0,0,0)', opacity: 1 }]),
       ph: mk(ph, [{ offset: 0, transform: pose(0), easing: IO }, { offset: .72, transform: pose(.72), easing: IO }, { offset: 1, transform: pose(1) }]),
       edge: mk(edge, [{ offset: 0, transform: pose(0) + Z, easing: IO }, { offset: .72, transform: pose(.72) + Z, easing: IO }, { offset: 1, transform: pose(1) + Z }]),
@@ -958,7 +963,7 @@ button{font:inherit;color:inherit}
   }
   function sceneTo(e, p) {
     if (e !== lastE) {
-      lastE = e; scrub.hero.currentTime = e * DUR; scrub.p3.currentTime = e * DUR;
+      lastE = e; if (scrub.hero) scrub.hero.currentTime = e * DUR; scrub.p3.currentTime = e * DUR;
       const gone = e >= 0.5;
       if (gone !== heroGone) { heroGone = gone; hero.style.visibility = gone ? 'hidden' : ''; }
     }
@@ -1116,7 +1121,7 @@ button{font:inherit;color:inherit}
     // decode every picture in view (webshot paints before a lazy or async image is ready)
     async settle() { const im = $$('img').filter(i => { const r = i.getBoundingClientRect(); return r.bottom > -50 && r.top < innerHeight + 50 && getComputedStyle(i).opacity !== '0'; }); await Promise.all(im.map(i => { i.loading = 'eager'; return (i.decode ? i.decode() : Promise.resolve()).catch(() => {}); })); await new Promise(r => setTimeout(r, 120)); return im.length; },
     scrollTo(y) { goY({ top: y, behavior: 'instant' }); return update(); },
-    state() { return Object.assign({}, G, { at: cur, part, turned, calm, inner: !!SC, y: getY(), acc, mode: mode(), struck, cracks: H && H.f.cracks.length }); }
+    state() { return Object.assign({}, G, { at: cur, part, turned, calm, inner: !!SC, y: getY(), sda: SDA, heroO: +getComputedStyle(hero).opacity, acc, mode: mode(), struck, cracks: H && H.f.cracks.length }); }
   };
 })();
 </script>
