@@ -818,6 +818,7 @@ button{font:inherit;color:inherit}
   const restOf = v => parseFloat(getComputedStyle(R).getPropertyValue(v)) || 0.5;
   function settleHero() {
     hero.classList.remove('pre'); done = true; playing = false;
+    setTimeout(() => { try { warm(); } catch (e) {} }, 500);
     cvL.style.opacity = restOf('--glow-rest'); bloom.style.opacity = ''; cancelAnimationFrame(chipRAF); cvF.width = cvF.height = 0;
   }
   function finish() { anims.forEach(a => { try { a.finish(); a.cancel(); } catch (e) {} }); anims.length = 0; settleHero(); }
@@ -902,18 +903,40 @@ button{font:inherit;color:inherit}
     const v = K[a].map((x, i) => x + (K[a + 1][i] - x) * e);
     return 'perspective(' + G.persp.toFixed(0) + 'px) translate3d(' + v[0].toFixed(1) + 'px,' + v[1].toFixed(1) + 'px,0) rotateZ(' + v[2].toFixed(2) + 'deg) rotateY(' + v[3].toFixed(2) + 'deg) rotateX(' + v[4].toFixed(2) + 'deg)';
   }
-  function turnTo(p) {
-    if (p === lastP) return; lastP = p;
-    const t = pose(p);
-    ph.style.transform = t;
-    edge.style.transform = t + ' translateZ(' + (-G.depth).toFixed(1) + 'px)';
-    edge.style.visibility = p >= 0.999 ? 'hidden' : '';
-    // a catch of light runs across the glass while it turns
-    const gp = clamp((p - 0.1) / 0.8);
-    glare.style.opacity = gp > 0 && gp < 1 ? Math.sin(Math.PI * gp).toFixed(3) : 0;
-    glare.style.transform = 'translateX(' + (-30 + 64 * gp).toFixed(1) + '%)';
-    const on = p >= 0.92;
-    if (on !== turned) { turned = on; stage.classList.toggle('turned', on); }
+  // The scene's motion is held by the browser's own animation engine, paused, and the scroll only moves its clock: the
+  // phone and the opening are then moved by the compositor, not restyled and redrawn by the page on every frame
+  const DUR = 1000, IO = 'cubic-bezier(.45,0,.55,1)';
+  let scrub = null, heroGone = false;
+  function makeScrub() {
+    if (scrub) Object.values(scrub).forEach(a => a.cancel());
+    const mk = (el, kf) => { const a = el.animate(kf, { duration: DUR, fill: 'both' }); a.pause(); a.currentTime = 0; return a; };
+    const rise = G.sv * (calm ? 0.06 : 0.24);
+    // it starts below the window, so nothing shows until it glides in (a short glide and a fade where less motion is asked)
+    const glide = calm ? G.sv * 0.12 : G.sv - G.phT + 60, Z = ' translateZ(' + (-G.depth).toFixed(1) + 'px)';
+    const up = 'translate3d(0,' + (-rise).toFixed(1) + 'px,0)', low = 'translate3d(0,' + glide.toFixed(1) + 'px,0)';
+    scrub = {
+      hero: mk(hero, [{ offset: 0, transform: 'translate3d(0,0,0)', opacity: 1, easing: IO }, { offset: .5, transform: up, opacity: 0 }, { offset: 1, transform: up, opacity: 0 }]),
+      p3: mk(p3, [{ offset: 0, transform: low, opacity: calm ? 0 : 1 }, { offset: .12, transform: low, opacity: calm ? 0 : 1, easing: IO }, { offset: 1, transform: 'translate3d(0,0,0)', opacity: 1 }]),
+      ph: mk(ph, [{ offset: 0, transform: pose(0), easing: IO }, { offset: .72, transform: pose(.72), easing: IO }, { offset: 1, transform: pose(1) }]),
+      edge: mk(edge, [{ offset: 0, transform: pose(0) + Z, easing: IO }, { offset: .72, transform: pose(.72) + Z, easing: IO }, { offset: 1, transform: pose(1) + Z }]),
+      edgeO: mk(edge, [{ offset: 0, opacity: 1 }, { offset: .985, opacity: 1 }, { offset: 1, opacity: 0 }]),
+      // a catch of light runs across the glass while it turns
+      glare: mk(glare, [{ offset: 0, opacity: 0, transform: 'translateX(-30%)' }, { offset: .1, opacity: 0, transform: 'translateX(-30%)', easing: 'ease-in-out' },
+        { offset: .5, opacity: 1 }, { offset: .9, opacity: 0, transform: 'translateX(34%)' }, { offset: 1, opacity: 0, transform: 'translateX(34%)' }])
+    };
+    lastE = lastP = -1;
+  }
+  function sceneTo(e, p) {
+    if (e !== lastE) {
+      lastE = e; scrub.hero.currentTime = e * DUR; scrub.p3.currentTime = e * DUR;
+      const gone = e >= 0.5;
+      if (gone !== heroGone) { heroGone = gone; hero.style.visibility = gone ? 'hidden' : ''; }
+    }
+    if (p !== lastP) {
+      lastP = p; scrub.ph.currentTime = scrub.edge.currentTime = scrub.edgeO.currentTime = scrub.glare.currentTime = p * DUR;
+      const on = p >= 0.92;
+      if (on !== turned) { turned = on; stage.classList.toggle('turned', on); }
+    }
   }
   function layout() {
     const vw = R.clientWidth, sv = Math.round(probe.getBoundingClientRect().height || innerHeight);
@@ -949,29 +972,22 @@ button{font:inherit;color:inherit}
     const sy = scrollY;
     tops = { story: story.getBoundingClientRect().top + sy };
     ['privacy', 'colors', 'faq', 'get'].forEach(id => { tops[id] = $('#' + id).getBoundingClientRect().top + sy; });
+    G.phT = phT;
+    makeScrub();
   }
   const stepTop = k => tops.story + (k === 0 ? G.T1 + G.sv * 0.15 : G.S0 + (k - 0.5) * G.step);
 
   let cur = -1, part = null, warmed = false, lastE = -1;
+  function warm() { if (warmed) return; warmed = true; shots.forEach(im => { im.loading = 'eager'; if (im.decode) im.decode().catch(() => {}); }); }
   const pills = $$('.sects a, .menu a'), menuLbl = $('#menulbl'), NAMES = { features: 'Features', privacy: 'Privacy', colors: 'Colors', faq: 'FAQ' };
   function update() {
     const sy = scrollY, y = sy - tops.story;
     // the page holds still: the logo and its line fade and rise away while the phone glides up into the same frame
-    const e = clamp(y / G.I);
-    if (e !== lastE) {
-      lastE = e;
-      const out = sm(clamp(e / 0.5)), inn = sm(clamp((e - 0.12) / 0.88));
-      hero.style.transform = e ? 'translate3d(0,' + (-out * G.sv * (calm ? 0.06 : 0.24)).toFixed(1) + 'px,0)' : '';
-      hero.style.opacity = (1 - out).toFixed(3);
-      hero.style.visibility = out >= 1 ? 'hidden' : '';
-      p3.style.transform = inn < 1 ? 'translate3d(0,' + ((1 - inn) * G.sv * (calm ? 0.12 : 0.62)).toFixed(1) + 'px,0)' : '';
-      p3.style.opacity = sm(clamp((e - 0.1) / 0.45)).toFixed(3);
-    }
-    // the phone turns with the scroll
-    turnTo(reduced ? 1 : clamp((y - G.T0) / (G.T1 - G.T0)));
+    // then the phone turns with the scroll
+    sceneTo(clamp(y / G.I), reduced ? 1 : clamp((y - G.T0) / (G.T1 - G.T0)));
     const k = y < G.S0 ? 0 : Math.min(N, Math.floor((y - G.S0) / G.step) + 1);
     if (k !== cur) show(k);
-    if (!warmed && y > 4) { warmed = true; shots.forEach(im => { im.loading = 'eager'; if (im.decode) im.decode().catch(() => {}); }); }
+    if (!warmed && y > G.I) warm();
     const line = sy + G.sv * 0.45;
     let np = y > G.I * 0.6 ? 'features' : '';
     ['privacy', 'colors', 'faq'].forEach(id => { if (tops[id] < line) np = id; });
