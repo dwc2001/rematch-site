@@ -1,0 +1,1069 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Rematch</title>
+<meta name="description" content="Rematch, a gym tracker for iPhone. Log every set, beat last week. You vs. You.">
+<meta name="theme-color" content="#0D0C0B" id="tc">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:title" content="Rematch">
+<meta property="og:description" content="Rematch, a gym tracker for iPhone. Log every set, beat last week. You vs. You.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://dwc2001.github.io/rematch-site/assets/icons/gym-amber-color.png">
+<meta name="twitter:card" content="summary">
+<style>
+@font-face{font-family:"Mona";src:url("assets/fonts/MonaSans-Regular.ttf") format("truetype");font-weight:400;font-display:swap}
+@font-face{font-family:"Mona";src:url("assets/fonts/MonaSans-Medium.ttf") format("truetype");font-weight:500;font-display:swap}
+@font-face{font-family:"Mona";src:url("assets/fonts/MonaSans-SemiBold.ttf") format("truetype");font-weight:600;font-display:swap}
+@font-face{font-family:"Mona Semi";src:url("assets/fonts/MonaSans_SemiExpanded-SemiBold.ttf") format("truetype");font-weight:600;font-display:swap}
+@font-face{font-family:"Mona Semi";src:url("assets/fonts/MonaSans_SemiExpanded-Bold.ttf") format("truetype");font-weight:700;font-display:swap}
+@font-face{font-family:"Mona Wide";src:url("assets/fonts/MonaSans_Expanded-Bold.ttf") format("truetype");font-weight:700;font-display:swap}
+@font-face{font-family:"Mona Wide";src:url("assets/fonts/MonaSans_Expanded-ExtraBold.ttf") format("truetype");font-weight:800;font-display:swap}
+
+/* the accent: the app's four, the page follows the one picked in Colors */
+:root{--acc-rgb:242 163 58;--accd:#F5B65E;--accl:#8F4E00;--on:#1C1204}
+:root[data-acc="coral"]{--acc-rgb:255 130 112;--accd:#FF9F90;--accl:#A02C26;--on:#230906}
+:root[data-acc="aqua"]{--acc-rgb:63 208 190;--accd:#6FE3D4;--accl:#00655A;--on:#031614}
+:root[data-acc="ice"]{--acc-rgb:183 203 255;--accd:#C3D3FF;--accl:#30566E;--on:#0B1230}
+:root{
+  color-scheme:dark;
+  --g:#0D0C0B;--surf:#1A1816;--line:#2B2723;--ink:#F4F0EA;--ink2:#A8A097;--tag:#C6C0B8;--tick:#5C5650;
+  --acc:rgb(var(--acc-rgb));--accw:var(--accd);
+  /* the app's sky (Palette.swift, a fixed accent): c0 .22, c1 .10, c2 .035, top .05 */
+  --c0:.22;--c1:.10;--c2:.035;--ctop:.05;
+  --b0:.30;--b1:.13;--b2:.04;--bloom-rest:.62;--glow-rest:.6;
+  --glass:rgba(26,24,22,.72);--glass-edge:rgba(255,255,255,.10);--glass-catch:rgba(255,255,255,.16);--glass-drop:rgba(0,0,0,.4);
+  --pill-on:rgba(244,240,234,.12);--pill-on-edge:rgba(255,255,255,.10);--seg:rgba(255,255,255,.05);
+  --m1:#8C857D;--m2:#2E2B28;--m3:#6F6962;--m4:#1B1917;--side:#6A645D;--side2:#2C2926;
+  --bezel:#050505;--phone-drop:0 0 0 transparent;--mark-drop:rgba(0,0,0,.5);
+  --rule:rgba(244,240,234,.10);--strike:rgb(var(--acc-rgb) / .9);--dust:rgba(205,190,172,.16);
+  --gut:max(16px,env(safe-area-inset-left,0px));--gut-r:max(16px,env(safe-area-inset-right,0px));
+  --top-safe:env(safe-area-inset-top,0px);
+}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){
+  color-scheme:light;
+  --g:#ECE9E4;--surf:#F7F5F1;--line:#D5CFC6;--ink:#171513;--ink2:#5A534A;--tag:#3F3A34;--tick:#B4ACA1;
+  --accw:var(--accl);
+  --c0:.30;--c1:.14;--c2:.05;--ctop:.07;
+  --b0:.42;--b1:.18;--b2:.05;--bloom-rest:.55;--glow-rest:.34;
+  --glass:rgba(247,245,241,.72);--glass-edge:rgba(23,21,19,.10);--glass-catch:rgba(255,255,255,.85);--glass-drop:rgba(60,44,24,.18);
+  --pill-on:rgba(23,21,19,.08);--pill-on-edge:rgba(23,21,19,.06);--seg:rgba(23,21,19,.05);
+  --m1:#E4DFD8;--m2:#8E8881;--m3:#C9C3BB;--m4:#6E6862;--side:#CFC8BE;--side2:#9A938A;
+  --bezel:#0A0A0A;--phone-drop:0 50px 90px -40px rgba(60,40,20,.42);--mark-drop:rgba(0,0,0,0);
+  --rule:rgba(23,21,19,.12);--strike:var(--accl);--dust:rgba(120,100,80,.22);
+}}
+:root[data-theme="light"]{
+  color-scheme:light;
+  --g:#ECE9E4;--surf:#F7F5F1;--line:#D5CFC6;--ink:#171513;--ink2:#5A534A;--tag:#3F3A34;--tick:#B4ACA1;
+  --accw:var(--accl);
+  --c0:.30;--c1:.14;--c2:.05;--ctop:.07;
+  --b0:.42;--b1:.18;--b2:.05;--bloom-rest:.55;--glow-rest:.34;
+  --glass:rgba(247,245,241,.72);--glass-edge:rgba(23,21,19,.10);--glass-catch:rgba(255,255,255,.85);--glass-drop:rgba(60,44,24,.18);
+  --pill-on:rgba(23,21,19,.08);--pill-on-edge:rgba(23,21,19,.06);--seg:rgba(23,21,19,.05);
+  --m1:#E4DFD8;--m2:#8E8881;--m3:#C9C3BB;--m4:#6E6862;--side:#CFC8BE;--side2:#9A938A;
+  --bezel:#0A0A0A;--phone-drop:0 50px 90px -40px rgba(60,40,20,.42);--mark-drop:rgba(0,0,0,0);
+  --rule:rgba(23,21,19,.12);--strike:var(--accl);--dust:rgba(120,100,80,.22);
+}
+
+html{background:var(--g);scrollbar-width:none;-webkit-text-size-adjust:100%}
+html::-webkit-scrollbar,body::-webkit-scrollbar{display:none}
+body{margin:0;background:var(--g);color:var(--ink);font:400 17px/1.4 "Mona",system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:clip;transition:background-color .35s ease,color .35s ease}
+main,footer{position:relative;z-index:1;overflow-x:clip}
+img{display:block;max-width:none}
+h1,h2,h3,p,ul{margin:0}
+ul{padding:0;list-style:none}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accw);outline-offset:3px}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.instant *,.instant *::before,.instant *::after{transition:none!important}
+
+/* ---------- the light, fixed at the top of the window like the app's ---------- */
+.sky{position:fixed;inset:0;z-index:0;pointer-events:none;transition:opacity .6s ease;
+  background:radial-gradient(88% 54% at 18% -12%,rgb(var(--acc-rgb) / var(--c0)) 0,rgb(var(--acc-rgb) / var(--c1)) 36%,rgb(var(--acc-rgb) / var(--c2)) 64%,rgb(var(--acc-rgb) / 0) 86%),
+    linear-gradient(rgb(var(--acc-rgb) / var(--ctop)),rgb(var(--acc-rgb) / 0) 50%)}
+
+/* ---------- the tab bar ---------- */
+.glass{background:var(--glass);-webkit-backdrop-filter:blur(20px) saturate(1.7);backdrop-filter:blur(20px) saturate(1.7);
+  border:1px solid var(--glass-edge);box-shadow:inset 0 1px 0 var(--glass-catch),0 10px 30px -10px var(--glass-drop);border-radius:999px}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.glass{background:color-mix(in srgb,var(--surf) 94%,transparent)}}
+.bar{position:fixed;z-index:60;top:calc(var(--top-safe) + 12px);left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));
+  margin:0 auto;max-width:1120px;height:60px;box-sizing:border-box;padding:0 7px;display:flex;align-items:center;gap:6px}
+.logo{flex:none;width:46px;height:46px;display:grid;place-items:center;border-radius:999px;color:var(--ink)}
+.logo svg{width:32px;height:29px;display:block}
+.logo .barbar{opacity:.5}
+.sects{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;gap:2px}
+.sects a,.menu a{height:46px;padding:0 17px;display:inline-flex;align-items:center;border-radius:999px;font:500 15px/1 "Mona",system-ui,sans-serif;
+  letter-spacing:.005em;color:var(--ink);white-space:nowrap;transition:background-color .25s ease,box-shadow .25s ease}
+.sects a[aria-current="true"],.menu a[aria-current="true"]{background:var(--pill-on);box-shadow:inset 0 0 0 1px var(--pill-on-edge)}
+.right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.mode{display:flex;gap:2px;padding:2px;border-radius:999px;background:var(--seg)}
+.mode button{all:unset;box-sizing:border-box;width:44px;height:44px;display:grid;place-items:center;border-radius:999px;cursor:pointer;color:var(--ink2);transition:background-color .25s ease,color .25s ease}
+.mode button[aria-pressed="true"]{background:var(--pill-on);color:var(--ink);box-shadow:inset 0 0 0 1px var(--pill-on-edge)}
+.mode svg{width:19px;height:19px}
+.mode button:focus-visible{outline:2px solid var(--accw);outline-offset:1px}
+.dl{all:unset;box-sizing:border-box;height:46px;padding:0 21px;display:inline-flex;align-items:center;border-radius:999px;cursor:pointer;
+  background:var(--acc);color:var(--on);font:700 15px/1 "Mona Semi",sans-serif;letter-spacing:.005em;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.42),inset 0 0 0 1px rgba(0,0,0,.06),0 8px 22px -10px rgb(var(--acc-rgb) / .7);transition:background-color .4s ease,color .4s ease,transform .15s ease}
+.dl:active{transform:scale(.97)}
+.dl:focus-visible{outline:2px solid var(--accw);outline-offset:3px}
+.menuwrap{display:none}
+@media (max-width:899px){
+  .bar{height:56px;padding:0 5px;gap:4px}
+  .sects{display:none}
+  .menuwrap{display:block;position:relative;margin:0 auto}
+  .menubtn{all:unset;box-sizing:border-box;height:46px;padding:0 14px 0 16px;display:inline-flex;align-items:center;gap:7px;border-radius:999px;cursor:pointer;
+    font:500 15px/1 "Mona",system-ui,sans-serif;color:var(--ink);background:var(--pill-on);box-shadow:inset 0 0 0 1px var(--pill-on-edge)}
+  .menubtn svg{width:12px;height:12px;transition:transform .25s ease}
+  .menubtn[aria-expanded="true"] svg{transform:rotate(180deg)}
+  .menubtn:focus-visible{outline:2px solid var(--accw);outline-offset:2px}
+  .menu{position:absolute;left:50%;top:calc(100% + 14px);transform:translateX(-50%);display:flex;flex-direction:column;gap:2px;padding:6px;border-radius:26px;min-width:180px;box-sizing:border-box}
+  .menu[hidden]{display:none}
+  .menu a{justify-content:flex-start;padding:0 18px}
+  .right{gap:5px;margin-left:0}
+  .dl{height:44px;padding:0 14px;font-size:14px}
+  .mode{padding:0;background:none}
+  .mode button{width:44px;height:44px}
+  .mode button[aria-pressed="true"]{display:none}
+  .mode button[aria-pressed="false"]{color:var(--ink)}
+}
+@media (max-width:359px){.dl{padding:0 12px}.menubtn{padding:0 11px 0 13px}}
+@media (max-width:339px){.dl{padding:0 10px;font-size:13px}.menubtn{padding:0 9px 0 11px}.bar{gap:2px}}
+
+/* ---------- the opening: the whole window, the lockup set into stone ---------- */
+.hero{position:absolute;inset:0;overflow:hidden;z-index:2;will-change:transform,opacity}
+.p3,.caps{z-index:3}
+.quake{position:absolute;inset:0}
+.hero canvas{position:absolute;left:0;top:0;pointer-events:none}
+.bloom,.dust{position:absolute;left:0;top:0;border-radius:50%;pointer-events:none}
+.bloom{opacity:var(--bloom-rest);background:radial-gradient(closest-side,rgb(var(--acc-rgb) / var(--b0)) 0,rgb(var(--acc-rgb) / var(--b1)) 42%,rgb(var(--acc-rgb) / var(--b2)) 72%,rgb(var(--acc-rgb) / 0) 100%)}
+.dust{opacity:0;background:radial-gradient(closest-side,transparent 38%,var(--dust) 62%,transparent 100%)}
+.hero-in{position:relative;height:100%;box-sizing:border-box;padding:84px var(--gut-r) 72px var(--gut);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.lk{--L:clamp(1px,.1724vw,2.2px);display:flex;align-items:center;gap:calc(var(--L)*15);transform-origin:calc(var(--L)*36) 50%}
+.lk-icon{width:calc(var(--L)*72);height:calc(var(--L)*72);border-radius:22.46%;box-shadow:0 calc(var(--L)*12) calc(var(--L)*26) rgba(0,0,0,.32)}
+.lk-col{display:flex;flex-direction:column;gap:calc(var(--L)*6);text-align:left}
+.wm{font:800 calc(var(--L)*44)/1 "Mona Wide",sans-serif;letter-spacing:-.04em;height:calc(var(--L)*39.6);display:flex;align-items:center;white-space:nowrap;
+  text-shadow:0 calc(var(--L)*2) calc(var(--L)*11) var(--mark-drop);margin-left:calc(var(--L)*-2)}
+.re{color:var(--accw);transition:color .4s ease}
+.tg{font:600 calc(var(--L)*15)/1.2 "Mona Semi",sans-serif;letter-spacing:.005em;color:var(--tag);margin:calc(var(--L)*-1.6) 0 0 calc(var(--L)*2);white-space:nowrap}
+.words{margin-top:clamp(36px,6.4vh,72px)}
+@media (max-width:579px){.lk{--L:calc((100vw - 44px) / 322)}}
+.words .h{font:700 clamp(25px,3.1vw,42px)/1.12 "Mona Semi",sans-serif;letter-spacing:-.018em;color:var(--ink);text-wrap:balance}
+.words .w{display:inline-block}
+.words .l2{margin-top:clamp(10px,1.4vh,16px);font:400 clamp(17px,1.55vw,21px)/1.4 "Mona",sans-serif;color:var(--ink2)}
+.cue{position:absolute;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:46px;height:46px;display:grid;place-items:center;color:var(--ink2)}
+.cue svg{width:16px;height:16px}
+.pre .lk,.pre .tg,.pre .words .w,.pre .words .l2,.pre .cue{opacity:0}
+.js .pre .lk{animation:safe 0s 2.6s forwards}.js .pre .tg,.js .pre .words .w,.js .pre .words .l2,.js .pre .cue{animation:safe 0s 2.8s forwards}
+@keyframes safe{to{opacity:1}}
+
+/* ---------- the phone ---------- */
+.story{position:relative;height:var(--track,auto)}
+.stage{position:sticky;top:0;height:var(--sv,100svh);overflow:hidden}
+.p3{position:absolute;left:var(--phL,0);top:var(--phT,0);width:var(--phW,280px);height:var(--phH,587px);perspective:var(--persp,1800px)}
+.ph{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform}
+.device{--du:var(--u,.65px);position:relative;width:calc(var(--du)*430);height:calc(var(--du)*902);padding:calc(var(--du)*11.6);box-sizing:border-box;transform-style:preserve-3d;
+  border:calc(var(--du)*2.4) solid transparent;border-radius:calc(var(--du)*69);
+  background:linear-gradient(var(--bezel),var(--bezel)) padding-box,
+    linear-gradient(158deg,var(--m1) 0,var(--m2) 14%,var(--m3) 38%,var(--m2) 58%,var(--m4) 80%,var(--m3) 100%) border-box;
+  box-shadow:inset 0 0 0 calc(var(--du)*1) rgba(255,255,255,.07),inset 0 calc(var(--du)*1.4) calc(var(--du)*1.4) rgba(255,255,255,.05),var(--phone-drop)}
+/* the body behind the face: seen as the phone's edge while it is turned */
+.device .back{position:absolute;left:calc(var(--du)*-2.4);top:calc(var(--du)*-2.4);right:calc(var(--du)*-2.4);bottom:calc(var(--du)*-2.4);border-radius:calc(var(--du)*69);
+  background:linear-gradient(90deg,var(--side) 0,var(--side2) 9%,var(--side2) 91%,var(--side) 100%);transform:translateZ(calc(var(--du)*-44))}
+.device .back.mid{transform:translateZ(calc(var(--du)*-22));background:linear-gradient(90deg,var(--m3) 0,var(--side2) 7%,var(--side2) 93%,var(--m3) 100%)}
+.device .key{position:absolute;width:calc(var(--du)*18);border-radius:calc(var(--du)*3);transform-origin:0 50%;
+  background:linear-gradient(90deg,var(--m4),var(--m1) 45%,var(--m3) 70%,var(--m4))}
+.device .k1,.device .k2,.device .k3{left:calc(var(--du)*-3.4);transform:translateZ(calc(var(--du)*-13)) rotateY(90deg)}
+.device .k1{top:calc(var(--du)*196);height:calc(var(--du)*34)}
+.device .k2{top:calc(var(--du)*262);height:calc(var(--du)*60)}
+.device .k3{top:calc(var(--du)*338);height:calc(var(--du)*60)}
+.device .k4{right:calc(var(--du)*-3.4);top:calc(var(--du)*290);height:calc(var(--du)*94);transform-origin:100% 50%;transform:translateZ(calc(var(--du)*-13)) rotateY(-90deg)}
+.flat .key{display:none}
+.screen{position:relative;width:100%;height:100%;border-radius:calc(var(--du)*55);overflow:hidden;background:var(--g);isolation:isolate}
+.island{position:absolute;z-index:9;top:calc(var(--du)*11.6);left:calc(var(--du)*138);width:calc(var(--du)*126);height:calc(var(--du)*37);border-radius:calc(var(--du)*18.5);background:#000}
+.scr{position:absolute;inset:0;z-index:2;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .3s cubic-bezier(.3,0,.4,1)}
+.scr.on{opacity:1}
+.glare{position:absolute;z-index:8;left:-60%;top:-20%;width:220%;height:140%;pointer-events:none;opacity:0;
+  background:linear-gradient(112deg,rgba(255,255,255,0) 40%,rgba(255,255,255,.11) 48%,rgba(255,255,255,.03) 53%,rgba(255,255,255,0) 58%)}
+.caps{position:absolute;left:var(--capL,auto);top:var(--capT,auto);width:var(--capW,auto);opacity:0;transition:opacity .4s ease;pointer-events:none}
+.desk .caps{transform:translateY(-50%)}
+.stage.turned .caps{opacity:1}
+.ticks{display:flex;gap:6px;margin-bottom:22px;height:4px}
+.ticks i{width:10px;height:4px;border-radius:2px;background:var(--tick);transition:width .3s cubic-bezier(.2,.9,.3,1),background-color .3s ease}
+.ticks i.done{background:var(--ink2)}
+.ticks i.on{width:30px;background:var(--accw)}
+.capstack{display:grid}
+.cap{grid-area:1/1;opacity:0;transform:translateY(10px);transition:opacity .3s cubic-bezier(.3,0,.4,1),transform .3s cubic-bezier(.2,.9,.3,1)}
+.cap.on{opacity:1;transform:none}
+.cap h2{font:700 42px/1.05 "Mona Semi",sans-serif;letter-spacing:-.025em;color:var(--ink);text-wrap:balance}
+.cap p{margin-top:14px;font:400 19px/1.4 "Mona",sans-serif;color:var(--ink2);max-width:30ch;text-wrap:pretty}
+.phone .ticks{margin-bottom:14px}
+.phone .cap h2{font-size:25px;line-height:1.1}
+.phone .cap p{margin-top:8px;font-size:16px;line-height:1.38}
+
+/* ---------- after the phone ---------- */
+.wrap{max-width:1120px;margin:0 auto;padding:0 var(--gut-r) 0 var(--gut)}
+@media (min-width:880px){.wrap{padding:0 48px}}
+.part{position:relative}
+.kick{font:600 14px/1 "Mona Semi",sans-serif;letter-spacing:.02em;color:var(--accw);margin-bottom:18px;transition:color .4s ease}
+.big{font:800 clamp(42px,8.4vw,116px)/.94 "Mona Wide",sans-serif;letter-spacing:-.045em;color:var(--ink);max-width:11ch}
+.mid{font:700 clamp(32px,4.6vw,60px)/1.02 "Mona Semi",sans-serif;letter-spacing:-.03em;color:var(--ink)}
+.sub{margin-top:26px;font:400 clamp(17px,1.6vw,21px)/1.4 "Mona",sans-serif;color:var(--ink2);max-width:34ch}
+
+.privacy{padding:clamp(120px,20vh,210px) 0 clamp(80px,12vh,130px)}
+.nots{display:flex;flex-wrap:wrap;gap:10px 30px;margin-top:52px;font:700 clamp(26px,3.2vw,40px)/1.15 "Mona Semi",sans-serif;letter-spacing:-.02em;color:var(--ink2)}
+.nots li{position:relative}
+.nots .x{position:relative;display:inline-block}
+.nots .x::after{content:"";position:absolute;left:-4%;right:-4%;top:51%;height:clamp(2px,.26vw,3.5px);border-radius:2px;background:var(--strike);transform-origin:0 50%;transform:scaleX(var(--k,1));transition:background-color .4s ease}
+.js .nots .x{color:var(--ink);transition:color .3s ease}.js .nots .x.cut{color:var(--ink2)}
+.just{margin-top:30px;font:600 clamp(18px,1.7vw,22px)/1.3 "Mona Semi",sans-serif;color:var(--ink)}
+
+.more{padding:clamp(70px,10vh,120px) 0}
+.feat{display:grid;grid-template-columns:repeat(3,1fr);gap:0 48px;margin-top:44px}
+.feat li{padding:26px 0 28px;border-top:1px solid var(--rule)}
+.feat svg{width:24px;height:24px;color:var(--accw);transition:color .4s ease}
+.feat h3{margin-top:16px;font:700 19px/1.25 "Mona Semi",sans-serif;letter-spacing:-.01em;color:var(--ink)}
+.feat p{margin-top:6px;font:400 16px/1.42 "Mona",sans-serif;color:var(--ink2);max-width:30ch}
+
+.colors{padding:clamp(72px,12vh,140px) 0}
+.colors-grid{display:grid;grid-template-columns:1fr auto;gap:56px;align-items:center}
+.accs{display:flex;flex-wrap:wrap;gap:8px;margin-top:32px}
+.accs button{all:unset;box-sizing:border-box;height:46px;padding:0 18px 0 14px;display:inline-flex;align-items:center;gap:10px;border-radius:999px;cursor:pointer;
+  font:500 15px/1 "Mona",sans-serif;color:var(--ink);box-shadow:inset 0 0 0 1px var(--line);transition:background-color .2s ease,box-shadow .2s ease}
+.accs button i{width:16px;height:16px;border-radius:50%;background:var(--c);box-shadow:inset 0 0 0 1px rgba(0,0,0,.18)}
+.accs button:focus-visible{outline:2px solid var(--accw);outline-offset:3px}
+.accs button[aria-pressed="true"]{background:var(--surf);box-shadow:inset 0 0 0 1.5px var(--ink)}
+.icons{display:flex;gap:18px;margin-top:40px}
+.tile{position:relative;width:88px;height:88px;border-radius:22.46%;overflow:hidden;box-shadow:0 10px 24px -10px rgba(0,0,0,.45)}
+.tile img{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .25s cubic-bezier(.3,0,.4,1)}
+.tile img.on{opacity:1}
+.colors-phone .device{--du:.64px}
+
+.faq{padding:clamp(72px,11vh,130px) 0}
+.qa{margin-top:36px;max-width:820px}
+.qa details{border-top:1px solid var(--rule)}
+.qa details:last-child{border-bottom:1px solid var(--rule)}
+.qa summary{list-style:none;cursor:pointer;min-height:64px;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:10px 0;
+  font:600 clamp(18px,1.6vw,21px)/1.3 "Mona Semi",sans-serif;color:var(--ink)}
+.qa summary::-webkit-details-marker{display:none}
+.qa summary i{flex:none;position:relative;width:16px;height:16px}
+.qa summary i::before,.qa summary i::after{content:"";position:absolute;left:0;top:7px;width:16px;height:2px;border-radius:1px;background:var(--ink2);transition:transform .3s cubic-bezier(.2,.9,.3,1)}
+.qa summary i::after{transform:rotate(90deg)}
+.qa details[open] summary i::after{transform:rotate(0)}
+.qa summary:focus-visible{outline-offset:4px;border-radius:8px}
+.qa p{padding:0 0 24px;font:400 17px/1.5 "Mona",sans-serif;color:var(--ink2);max-width:58ch}
+
+.end{padding:clamp(90px,14vh,160px) 0 clamp(70px,10vh,110px);text-align:center}
+.end-lock{position:relative;display:inline-flex;align-items:center;gap:14px}
+.end-lock canvas{position:absolute;pointer-events:none}
+.end-lock img,.end-lock .col{position:relative;z-index:1}
+.end-lock img{width:72px;height:72px;border-radius:22.46%;box-shadow:0 12px 26px rgba(0,0,0,.3)}
+.end-lock .col{text-align:left;display:flex;flex-direction:column;gap:5px}
+.end-lock .wm2{font:800 44px/1 "Mona Wide",sans-serif;letter-spacing:-.04em;height:40px;display:flex;align-items:center;margin-left:-2px}
+.end-lock .tg2{font:600 15px/1.2 "Mona Semi",sans-serif;color:var(--tag);margin-left:2px}
+.end h2{margin-top:52px;font:700 clamp(28px,3.4vw,44px)/1.1 "Mona Semi",sans-serif;letter-spacing:-.02em;color:var(--ink);padding:0 var(--gut-r) 0 var(--gut);text-wrap:balance}
+.end p{margin-top:12px;font:400 17px/1.45 "Mona",sans-serif;color:var(--ink2)}
+.end .dl{margin-top:32px;height:54px;padding:0 30px;font-size:17px}
+
+.foot{position:relative;z-index:1;padding:44px 0 calc(40px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--rule)}
+.foot .wrap{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:28px}
+.fbrand{display:flex;align-items:center;gap:12px}
+.fbrand svg{width:28px;height:26px;color:var(--ink)}
+.fbrand svg .barbar{opacity:.5}
+.fbrand b{font:800 20px/1 "Mona Wide",sans-serif;letter-spacing:-.04em}
+.flinks{display:flex;flex-wrap:wrap;gap:4px 6px}
+.flinks a{min-height:44px;padding:0 10px;display:inline-flex;align-items:center;font:500 15px/1 "Mona",sans-serif;color:var(--ink2);border-radius:999px}
+.flinks a:hover{color:var(--ink)}
+.social{display:flex;gap:10px}
+.social a{width:46px;height:46px;display:grid;place-items:center;color:var(--ink)}
+.social svg{width:20px;height:20px}
+.fine{grid-column:1/-1;font:400 14px/1.45 "Mona",sans-serif;color:var(--ink2)}
+
+.toast{position:fixed;z-index:70;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,16px);opacity:0;pointer-events:none;
+  display:flex;align-items:center;gap:12px;padding:10px 20px 10px 10px;border-radius:999px;width:max-content;max-width:calc(100vw - 32px);box-sizing:border-box;
+  font:500 15px/1.3 "Mona",sans-serif;color:var(--ink);transition:opacity .25s ease,transform .35s cubic-bezier(.2,.9,.3,1)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast img{width:34px;height:34px;border-radius:22.46%;flex:none}
+
+@media (max-width:879px){
+  .colors-grid{grid-template-columns:1fr;gap:44px}
+  .colors-phone{justify-self:center}
+  .colors-phone .device{--du:.56px}
+  .icons{gap:14px;margin-top:28px}
+  .tile{width:76px;height:76px}
+  .accs{margin-top:24px;display:grid;grid-template-columns:1fr 1fr;max-width:360px}
+  .feat{grid-template-columns:1fr;margin-top:28px}
+  .feat li{display:grid;grid-template-columns:24px 1fr;gap:0 16px;padding:20px 0 22px}
+  .feat svg{grid-row:1/3;margin-top:1px}
+  .feat h3{margin-top:0}
+  .foot .wrap{grid-template-columns:1fr;gap:18px}
+  .flinks{margin-left:-10px}
+}
+@media (min-width:880px) and (max-width:1060px){.feat{grid-template-columns:1fr 1fr}}
+@media (prefers-reduced-motion:reduce){.toast{transition:opacity .2s ease}.toast,.toast.show{transform:translate(-50%,0)}}
+@media (scripting:none){
+  .story{height:auto}.stage{position:relative;height:auto;overflow:visible;padding:0 0 40px}
+  .hero{position:relative;height:100svh;min-height:560px}
+  .p3{position:relative;left:auto;top:auto;margin:0 auto;--u:.62px;width:calc(430*.62px);height:calc(902*.62px)}
+  .caps{position:static;opacity:1;width:auto;margin:40px var(--gut-r) 0 var(--gut);transform:none}
+  .cap{grid-area:auto;opacity:1;transform:none;margin-bottom:28px}.capstack{display:block}.ticks{display:none}
+}
+</style>
+</head>
+<body>
+<!-- Rematch website, version 4 (2026-11-02). The lockup lands in the stone of a full window lit like the app, a phone
+     turns to face you and walks through the real app, then privacy, the details, colours, questions and the end. -->
+
+
+<div class="sky" id="skyA" aria-hidden="true"></div><div class="sky" id="skyB" aria-hidden="true" style="opacity:0"></div>
+
+<header class="bar glass" id="bar">
+  <a class="logo" href="#top" aria-label="Rematch, back to the top">
+    <svg viewBox="150 182 724 660" aria-hidden="true"><rect class="barbar" x="150" y="483" width="724" height="58" rx="29" fill="currentColor"/><g fill="currentColor"><rect x="212" y="362" width="92" height="300" rx="16"/><rect x="324" y="277" width="108" height="470" rx="18"/><rect x="452" y="182" width="124" height="660" rx="20"/><rect x="596" y="412" width="64" height="200" rx="14"/></g></svg>
+  </a>
+  <nav class="sects" aria-label="Sections">
+    <a href="#features" data-part="features">Features</a>
+    <a href="#privacy" data-part="privacy">Privacy</a>
+    <a href="#colors" data-part="colors">Colors</a>
+    <a href="#faq" data-part="faq">FAQ</a>
+  </nav>
+  <div class="menuwrap">
+    <button class="menubtn" id="menubtn" type="button" aria-expanded="false" aria-controls="menu"><span id="menulbl">Explore</span><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <nav class="menu glass" id="menu" aria-label="Sections" hidden>
+      <a href="#features" data-part="features">Features</a>
+      <a href="#privacy" data-part="privacy">Privacy</a>
+      <a href="#colors" data-part="colors">Colors</a>
+      <a href="#faq" data-part="faq">FAQ</a>
+    </nav>
+  </div>
+  <div class="right">
+    <div class="mode" role="group" aria-label="Appearance">
+      <button type="button" data-mode="dark" aria-pressed="true" aria-label="Dark"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M15.6 12.6A6.6 6.6 0 0 1 7.4 4.4a6.6 6.6 0 1 0 8.2 8.2Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
+      <button type="button" data-mode="light" aria-pressed="false" aria-label="Light"><svg viewBox="0 0 20 20" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="10" cy="10" r="3.4"/><path d="M10 2.2v1.7M10 16.1v1.7M2.2 10h1.7M16.1 10h1.7M4.5 4.5l1.2 1.2M14.3 14.3l1.2 1.2M4.5 15.5l1.2-1.2M14.3 5.7l1.2-1.2"/></g></svg></button>
+    </div>
+    <button class="dl" type="button" data-toast>Download</button>
+  </div>
+</header>
+
+<main>
+
+
+<section class="story" id="top" aria-label="Rematch">
+  <div class="stage" id="stage">
+    <div class="hero" id="hero">
+    <script>document.documentElement.classList.add('js');document.getElementById('hero').classList.add('pre')</script>
+    <div class="quake" id="quake">
+      <div class="bloom" id="bloom" aria-hidden="true"></div>
+      <div class="dust" id="dust" aria-hidden="true"></div>
+      <canvas id="ground" aria-hidden="true"></canvas>
+      <canvas id="glow" aria-hidden="true"></canvas>
+      <canvas id="fx" aria-hidden="true"></canvas>
+      <div class="hero-in" id="heroin">
+        <div class="lk" id="lk">
+          <img class="lk-icon" id="lkicon" data-icon src="assets/icons/gym-amber-color.png" alt="" width="512" height="512">
+          <div class="lk-col" id="lkcol">
+            <h1 class="wm" aria-label="Rematch"><span class="re">re</span>match</h1>
+            <p class="tg" id="tg">You vs. You</p>
+          </div>
+        </div>
+        <div class="words" id="words">
+          <p class="h"><span class="w">Your</span> <span class="w">gym</span> <span class="w">progress,</span> <span class="w">simplified.</span></p>
+          <p class="l2" id="l2">Log every set. Beat last week.</p>
+        </div>
+      </div>
+    </div>
+    <a class="cue glass" id="cue" href="#features" aria-label="See the features"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 6 8 10.5 12.5 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+  </div>
+    <div class="p3" id="p3">
+      <div class="ph" id="ph">
+        <div class="device">
+          <i class="back"></i><i class="back mid"></i>
+          <i class="key k1"></i><i class="key k2"></i><i class="key k3"></i><i class="key k4"></i>
+          <div class="screen" id="screen">
+            <img class="scr on" data-s="today" data-i="0" src="assets/screens/today-dark.jpg" alt="Today: Good evening, Legs, five lifts, one Start workout button, and the last workout, Push, with Chest Press 185 by 11, a record." decoding="async" width="780" height="1696">
+            <img class="scr" data-s="workout" data-i="1" src="assets/screens/workout-dark.jpg" alt="Workout mode for Push: the program as a list with the latest or last time under each lift, 1:56 since Chest Press set 2, the clock and a round pause button." loading="lazy" decoding="async" width="780" height="1696">
+            <img class="scr" data-s="plates" data-i="2" src="assets/screens/plates-dark.jpg" alt="Logging set 3 of Chest Press in plates: 190 lb as a machine of 45 lb plus 72.5 a side, the plate buttons, 7 reps and Log set 3." loading="lazy" decoding="async" width="780" height="1696">
+            <img class="scr" data-s="trayarmed" data-i="3" src="assets/screens/trayarmed-dark.jpg" alt="Finishing: the bottom tray pushed up and turned green, Release to complete." loading="lazy" decoding="async" width="780" height="1696">
+            <img class="scr" data-s="summary-muscles" data-i="4" src="assets/screens/summary-muscles-dark.jpg" alt="After the workout: the muscles hit on a front and back figure, chest, tris and shoulders, then the session: 3:04 average rest, 5:16 longest, 160 peak bpm." loading="lazy" decoding="async" width="780" height="1696">
+            <img class="scr" data-s="data" data-i="5" src="assets/screens/data-dark.jpg" alt="Data: sets per muscle for the last 7 days, each against its average, and your lifts: 5 on a plateau, 11 progressing." loading="lazy" decoding="async" width="780" height="1696">
+            <img class="scr" data-s="weight" data-i="6" src="assets/screens/weight-dark.jpg" alt="Weight: 181.9 lb on Friday, Oct 30, and a six month line from 187.6 down to 181.9." loading="lazy" decoding="async" width="780" height="1696">
+            <i class="glare" id="glare"></i>
+            <i class="island"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="caps" id="caps"><span id="features" class="anchor" aria-hidden="true"></span>
+      <div class="ticks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="capstack">
+        <div class="cap on" data-i="0"><h2>Today, one tap.</h2><p>Your split knows what day it is.</p></div>
+        <div class="cap" data-i="1"><h2>The whole session, one screen.</h2><p>Rest counts up, never down.</p></div>
+        <div class="cap" data-i="2"><h2>Every set starts filled in.</h2><p>Plates per side, one tap away.</p></div>
+        <div class="cap" data-i="3"><h2>Swipe up to finish.</h2></div>
+        <div class="cap" data-i="4"><h2>See what you hit.</h2></div>
+        <div class="cap" data-i="5"><h2>Sets per muscle, per week.</h2><p>One lift counts for each muscle it works.</p></div>
+        <div class="cap" data-i="6"><h2>Weigh in when you want.</h2></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="part more" id="more" aria-labelledby="more-h">
+  <div class="wrap">
+    <h2 class="mid" id="more-h">And the details.</h2>
+    <ul class="feat">
+      <li><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13M13.5 4.5 17 8l-3.5 3.5M20 16H7M10.5 12.5 7 16l3.5 3.5"/></g></svg><h3>Change the plan mid-workout.</h3><p>Add, swap or skip a lift. Nothing you logged is lost.</p></li>
+      <li><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 17.5 8 12l3.5 2.5 4-4.5h5"/><path d="M3.5 21h17"/></g></svg><h3>Plateaus, said plainly.</h3><p>Four sessions with no gain, and it tells you.</p></li>
+      <li><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 21V4M5.5 4.5h11l-2.5 4 2.5 4h-11"/></g></svg><h3>A baseline week.</h3><p>Your first seven days set where you start.</p></li>
+      <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7.5-4.4-7.5-10.2A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 7.5 2.6C19.5 15.6 12 20 12 20Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg><h3>Apple Health.</h3><p>Heart rate in. Workouts saved as strength training.</p></li>
+      <li><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></g></svg><h3>Fix the past.</h3><p>Edit a workout, or log one you missed.</p></li>
+      <li><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15Z"/><path d="M10 21h4"/></g></svg><h3>Weigh-in reminders.</h3><p>On the day and at the time you pick.</p></li>
+    </ul>
+  </div>
+</section>
+
+<section class="part privacy" id="privacy" aria-labelledby="priv-h">
+  <div class="wrap">
+    <h2 class="big" id="priv-h">Stays on this phone.</h2>
+    <p class="sub">No account. No social media. Nothing is sent anywhere else.</p>
+    <ul class="nots" id="nots" aria-label="Not in Rematch">
+      <li><span class="x">Feed</span></li>
+      <li><span class="x">Likes</span></li>
+      <li><span class="x">Followers</span></li>
+      <li><span class="x">Streaks</span></li>
+      <li><span class="x">Ads</span></li>
+    </ul>
+    <p class="just">Just You vs. You.</p>
+  </div>
+</section>
+
+<section class="part colors" id="colors" aria-labelledby="col-h">
+  <div class="wrap colors-grid">
+    <div>
+      <h2 class="mid" id="col-h">Make it yours.</h2>
+      <p class="sub">Pick a color. The app follows, and so does this page.</p>
+      <div class="accs" role="group" aria-label="Accent color">
+        <button type="button" data-acc="amber" aria-pressed="true"><i style="--c:#F2A33A"></i>Amber</button>
+        <button type="button" data-acc="coral" aria-pressed="false"><i style="--c:#FF8270"></i>Coral</button>
+        <button type="button" data-acc="aqua" aria-pressed="false"><i style="--c:#3FD0BE"></i>Aqua</button>
+        <button type="button" data-acc="ice" aria-pressed="false"><i style="--c:#B7CBFF"></i>Ice</button>
+      </div>
+      <div class="icons">
+        <span class="tile" data-kind="color"><img class="on" data-tile="amber" src="assets/icons/gym-amber-color.png" alt="Amber icon, color" width="512" height="512"><img data-tile="coral" src="assets/icons/gym-coral-color.png" alt="" loading="lazy" width="512" height="512"><img data-tile="aqua" src="assets/icons/gym-aqua-color.png" alt="" loading="lazy" width="512" height="512"><img data-tile="ice" src="assets/icons/gym-ice-color.png" alt="" loading="lazy" width="512" height="512"></span>
+        <span class="tile" data-kind="dark"><img class="on" data-tile="amber" src="assets/icons/gym-amber-dark.png" alt="Amber icon, dark" width="512" height="512"><img data-tile="coral" src="assets/icons/gym-coral-dark.png" alt="" loading="lazy" width="512" height="512"><img data-tile="aqua" src="assets/icons/gym-aqua-dark.png" alt="" loading="lazy" width="512" height="512"><img data-tile="ice" src="assets/icons/gym-ice-dark.png" alt="" loading="lazy" width="512" height="512"></span>
+        <span class="tile" data-kind="light"><img class="on" data-tile="amber" src="assets/icons/gym-amber-light.png" alt="Amber icon, light" width="512" height="512"><img data-tile="coral" src="assets/icons/gym-coral-light.png" alt="" loading="lazy" width="512" height="512"><img data-tile="aqua" src="assets/icons/gym-aqua-light.png" alt="" loading="lazy" width="512" height="512"><img data-tile="ice" src="assets/icons/gym-ice-light.png" alt="" loading="lazy" width="512" height="512"></span>
+      </div>
+    </div>
+    <div class="colors-phone">
+      <div class="device flat">
+        <div class="screen">
+          <img class="scr on" data-s="today" src="assets/screens/today-dark.jpg" alt="Today in the color you picked." loading="lazy" decoding="async" width="780" height="1696">
+          <i class="island"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="part faq" id="faq" aria-labelledby="faq-h">
+  <div class="wrap">
+    <h2 class="mid" id="faq-h">Questions.</h2>
+    <div class="qa">
+      <details><summary>Do I need an account?<i aria-hidden="true"></i></summary><p>No. Open it and lift. There is nothing to sign up for.</p></details>
+      <details><summary>Where does my data go?<i aria-hidden="true"></i></summary><p>Nowhere. It stays on your iPhone, and you can export it any time.</p></details>
+      <details><summary>How does it know when to add weight?<i aria-hidden="true"></i></summary><p>Stay in your rep range, 6 to 10 to start. When your first set hits 11, it suggests the lift's next step up. Every number is yours to change.</p></details>
+      <details><summary>Does it work with Apple Watch?<i aria-hidden="true"></i></summary><p>It reads the heart rate your watch saves to Apple Health, and saves each workout there as strength training. There is no watch app yet.</p></details>
+      <details><summary>When can I get it?<i aria-hidden="true"></i></summary><p>Rematch is in testing on iPhone now. It is coming to the App Store.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="part end" id="get" aria-labelledby="get-h">
+  <div class="end-lock" id="endlock">
+    <canvas id="endground" aria-hidden="true"></canvas>
+    <img data-icon src="assets/icons/gym-amber-color.png" alt="" width="512" height="512" loading="lazy">
+    <div class="col"><div class="wm2" aria-label="Rematch"><span class="re">re</span>match</div><div class="tg2">You vs. You</div></div>
+  </div>
+  <h2 id="get-h">Coming soon to the App Store.</h2>
+  <p>In testing on iPhone now.</p>
+  <button class="dl" type="button" data-toast>Download</button>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="fbrand"><svg viewBox="150 182 724 660" aria-hidden="true"><rect class="barbar" x="150" y="483" width="724" height="58" rx="29" fill="currentColor"/><g fill="currentColor"><rect x="212" y="362" width="92" height="300" rx="16"/><rect x="324" y="277" width="108" height="470" rx="18"/><rect x="452" y="182" width="124" height="660" rx="20"/><rect x="596" y="412" width="64" height="200" rx="14"/></g></svg><b><span class="re">re</span>match</b></div>
+    <nav class="flinks" aria-label="Company">
+      <a href="#" data-toast>Privacy</a><a href="#" data-toast>Terms</a><a href="#" data-toast>Support</a><a href="#" data-toast>Press</a>
+    </nav>
+    <div class="social">
+      <a class="glass" href="#" data-toast aria-label="Rematch on Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5.2"/><circle cx="12" cy="12" r="4.1"/></g><circle cx="17.3" cy="6.7" r="1.15" fill="currentColor"/></svg></a>
+      <a class="glass" href="#" data-toast aria-label="Rematch on TikTok"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.3 3.2c.4 2.3 1.9 3.8 4.2 4v3.1c-1.6 0-3-.5-4.2-1.3v6.4a5.6 5.6 0 1 1-5.6-5.6c.3 0 .6 0 .9.1v3.2a2.5 2.5 0 1 0 1.6 2.3V3.2h3.1Z" fill="currentColor"/></svg></a>
+      <a class="glass" href="#" data-toast aria-label="Rematch on Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.6 21v-7.6h2.6l.4-3h-3V8.5c0-.9.3-1.5 1.5-1.5h1.6V4.3c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4v2.2H7.9v3h2.6V21h3.1Z" fill="currentColor"/></svg></a>
+    </div>
+    <p class="fine">&copy; 2026 Rematch. Made for iPhone. Requires iOS&nbsp;26.</p>
+  </div>
+</footer>
+
+<div class="toast glass" id="toast" role="status" aria-live="polite"><img data-icon src="assets/icons/gym-amber-color.png" alt="" width="512" height="512" loading="lazy"><span id="toastmsg"></span></div>
+
+<script>
+(() => {
+  const D = document, R = D.documentElement;
+  const $ = s => D.querySelector(s), $$ = s => [...D.querySelectorAll(s)];
+  R.classList.add('js');
+  // The motion plays on every device. Where the system asks for less motion it is gentler, not gone: no jolt, no flying
+  // chips, no parallax, a shorter drop (his Mac has Reduce Motion on and he wants the computer to show it, 2026-11-02)
+  let calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let reduced = false;
+  // a refresh starts at the top, so the smash is seen every time
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  if (!location.hash) scrollTo(0, 0);
+  const mqLight = matchMedia('(prefers-color-scheme: light)');
+  const RGB = { amber: [242, 163, 58], coral: [255, 130, 112], aqua: [63, 208, 190], ice: [183, 203, 255] };
+  let acc = 'amber', chosen = null;
+  const mode = () => chosen || (mqLight.matches ? 'light' : 'dark');
+  const probe = D.createElement('div');
+  probe.style.cssText = 'position:fixed;left:0;top:0;width:0;height:100svh;visibility:hidden;pointer-events:none';
+  D.body.appendChild(probe);
+  const hero = $('#hero'), bar = $('#bar');
+  if (!reduced) hero.classList.add('pre');
+
+  // ---------- the theme and the accent ----------
+  // a screen's file for this accent and theme (amber is the plain name, as captured first)
+  // the captures there are (written in at publish); a missing one falls back to Amber in the same theme, then to dark
+  const HAVE = new Set(/*screens*/["data-6m-dark","data-all-dark","data-aqua-dark","data-coral-dark","data-dark","data-group-dark","data-ice-dark","data-lift-dark","data-lift-light","data-light","data-plateau-dark","data-sets-dark","howto-dark","lift-dark","lift-light","logsheet-dark","logsheet-light","paused-dark","plates-aqua-dark","plates-coral-dark","plates-dark","plates-ice-dark","plates-light","profile-dark","settings-dark","setup-hit-dark","setup-lifts-dark","setup-numbers-dark","setup-ready-dark","setup-split-dark","setup-start-dark","setup-week-dark","setup-welcome-dark","summary-dark","summary-graph-dark","summary-lifts-dark","summary-lifts-light","summary-light","summary-muscles-aqua-dark","summary-muscles-coral-dark","summary-muscles-dark","summary-muscles-ice-dark","summary-muscles-light","summary-next-dark","summary-push-dark","summary-session-dark","summary-win-dark","today-aqua-dark","today-aqua-light","today-coral-dark","today-coral-light","today-dark","today-ice-dark","today-ice-light","today-light","today-time-dark","trayarmed-aqua-dark","trayarmed-coral-dark","trayarmed-dark","trayarmed-ice-dark","trayarmed-light","trayhalf-dark","weight-aqua-dark","weight-coral-dark","weight-dark","weight-ice-dark","weight-light","workout-aqua-dark","workout-coral-dark","workout-dark","workout-ice-dark","workout-light"]/*end*/);
+  const srcFor = (s, a, m) => {
+    const want = s + (a === 'amber' ? '' : '-' + a) + '-' + m;
+    const f = !HAVE.size || HAVE.has(want) ? want : HAVE.has(s + '-' + m) ? s + '-' + m : s + '-dark';
+    return 'assets/screens/' + f + '.jpg';
+  };
+  function swapScreens() {
+    const m = mode();
+    $$('img[data-s]').forEach(im => {
+      const want = srcFor(im.dataset.s, acc, m);
+      if (im.getAttribute('src') === want) return;
+      im.onerror = () => { im.onerror = null; im.src = 'assets/screens/' + im.dataset.s + '-dark.jpg'; };
+      if (im.loading === 'lazy' && !im.complete) { im.src = want; return; }
+      const pre = new Image(); pre.src = want;
+      (pre.decode ? pre.decode() : Promise.resolve()).catch(() => {}).then(() => { im.src = want; });
+    });
+    $$('img[data-icon]').forEach(im => { im.src = 'assets/icons/gym-' + acc + '-color.png'; });
+  }
+  function setThemeColor() {
+    // the browser's own bar takes the ground with a breath of the accent, as the app's top light does
+    const g = mode() === 'light' ? [236, 233, 228] : [13, 12, 11], a = RGB[acc], t = mode() === 'light' ? 0.1 : 0.08;
+    $('#tc').setAttribute('content', 'rgb(' + g.map((v, i) => Math.round(v * (1 - t) + a[i] * t)).join(',') + ')');
+  }
+  const modeBtns = $$('.mode button');
+  function showMode() { const m = mode(); modeBtns.forEach(b => b.setAttribute('aria-pressed', b.dataset.mode === m ? 'true' : 'false')); }
+  function applyMode(m) {
+    chosen = m; R.dataset.theme = m;
+    showMode(); swapScreens(); setThemeColor(); repaint();
+    if (done) cvL.style.opacity = restOf('--glow-rest');
+  }
+  modeBtns.forEach(b => b.addEventListener('click', () => {
+    // on a phone only the other choice shows, so a tap is the switch
+    applyMode(b.getAttribute('aria-pressed') === 'true' ? (b.dataset.mode === 'dark' ? 'light' : 'dark') : b.dataset.mode);
+  }));
+  mqLight.addEventListener && mqLight.addEventListener('change', () => { if (!chosen) { showMode(); swapScreens(); setThemeColor(); repaint(); } });
+
+  const skies = [$('#skyA'), $('#skyB')]; let skyOn = 0;
+  const accBtns = $$('.accs button');
+  function applyAccent(a) {
+    if (a === acc) return;
+    acc = a; R.dataset.acc = a;
+    const next = skies[1 - skyOn], cur = skies[skyOn];
+    next.style.setProperty('--acc-rgb', RGB[a].join(' ')); cur.style.setProperty('--acc-rgb', cur.style.getPropertyValue('--acc-rgb') || RGB.amber.join(' '));
+    next.style.opacity = 1; cur.style.opacity = 0; skyOn = 1 - skyOn;
+    accBtns.forEach(x => x.setAttribute('aria-pressed', x.dataset.acc === a ? 'true' : 'false'));
+    $$('[data-tile]').forEach(im => { const on = im.dataset.tile === a; im.classList.toggle('on', on); im.alt = on ? a[0].toUpperCase() + a.slice(1) + ' icon, ' + im.parentNode.dataset.kind : ''; });
+    swapScreens(); setThemeColor(); repaintGlow();
+  }
+  skies[0].style.setProperty('--acc-rgb', RGB.amber.join(' '));
+  accBtns.forEach(b => b.addEventListener('click', () => applyAccent(b.dataset.acc)));
+  showMode(); swapScreens(); setThemeColor();
+
+  // ---------- the stone: seeded cracks, drawn once into a canvas ----------
+  function mulberry(seed) { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+  const inRect = (x, y, r, m) => x >= r.x - m && x <= r.x + r.w + m && y >= r.y - m && y <= r.y + r.h + m;
+  // Impact fractures, as stone breaks: a few radial cracks, mostly straight with sudden kinks, tapering, forking at sharp
+  // angles, and broken rings joining them close to the badge, so the ground reads as smashed, not veined.
+  function fractures(o) {
+    const Rn = mulberry(o.seed), k = o.k, box = o.box, C = o.c, out = [];
+    const cx = box.x + box.w / 2, cy = box.y + box.h / 2;
+    const stop = (x, y) => x < o.b.l || x > o.b.r || y < o.b.t || y > o.b.b || o.keep.some(r => inRect(x, y, r, 14 * k));
+    function walk(x, y, an, L, w0) {
+      const p = [{ x, y }]; let h = an, d = 0;
+      while (d < L) {
+        const s = (11 + Rn() * 24) * k;
+        if (Rn() < 0.3) h += (Rn() < 0.5 ? -1 : 1) * (0.2 + Rn() * 0.34); else h += (Rn() - 0.5) * 0.14;
+        h = an + (h - an) * 0.68;
+        const nx = x + Math.cos(h) * s, ny = y + Math.sin(h) * s;
+        if (stop(nx, ny)) break;
+        x = nx; y = ny; d += s; p.push({ x, y });
+      }
+      if (p.length < 2) return null;
+      // the broken edge: small sideways steps between the kinks
+      const q = [p[0]];
+      for (let i = 1; i < p.length; i++) {
+        const a = p[i - 1], b = p[i], dx = b.x - a.x, dy = b.y - a.y, l = Math.hypot(dx, dy) || 1, m = 1 + Math.floor(Rn() * 2);
+        for (let j = 1; j <= m; j++) { const f = j / (m + 1), o = (Rn() - 0.5) * 2.6 * k; q.push({ x: a.x + dx * f - dy / l * o, y: a.y + dy * f + dx / l * o }); }
+        q.push(b);
+      }
+      const n = q.length;
+      const ws = q.map((_, i) => w0 * Math.pow(1 - i / (n - 1), 1.45) * (0.72 + Rn() * 0.56) + 0.5);
+      return { p: q, ws };
+    }
+    const m = (o.rim ? 9 : 0) * k, rb = { x: box.x - m, y: box.y - m, w: box.w + 2 * m, h: box.h + 2 * m };
+    // where a ray from the hit leaves the pocket
+    function exitAt(an) {
+      let x = C.x, y = C.y; const ux = Math.cos(an), uy = Math.sin(an);
+      while (inRect(x, y, rb, 0)) { x += ux; y += uy; }
+      return { x, y };
+    }
+    let rim = null;
+    if (o.rim) {
+      // round the pocket's corners, walk its edge in small jagged steps
+      const rr = Math.min(22 * k, rb.h / 2), pts = [], per = 2 * (rb.w + rb.h), st = 8 * k;
+      const at = t => {
+        let d = t * per; const W = rb.w, Hh = rb.h;
+        let x, y; if (d < W) { x = rb.x + d; y = rb.y; } else if ((d -= W) < Hh) { x = rb.x + W; y = rb.y + d; } else if ((d -= Hh) < W) { x = rb.x + W - d; y = rb.y + Hh; } else { d -= W; x = rb.x; y = rb.y + Hh - d; }
+        // pull the corners in to a radius
+        const cx2 = Math.min(Math.max(x, rb.x + rr), rb.x + W - rr), cy2 = Math.min(Math.max(y, rb.y + rr), rb.y + Hh - rr), dx = x - cx2, dy = y - cy2, l = Math.hypot(dx, dy);
+        return l > rr ? { x: cx2 + dx / l * rr, y: cy2 + dy / l * rr } : { x, y };
+      };
+      for (let t = 0; t < per; t += st * (1.2 + Rn() * 2)) { const q = at(t / per), q2 = at(Math.min(1, (t + 1) / per)); const nx = q2.y - q.y, ny = q.x - q2.x, l = Math.hypot(nx, ny) || 1, j = (Rn() - 0.5) * 4.4 * k + (Rn() < 0.12 ? (3 + Rn() * 4) * k : 0); pts.push({ x: q.x + nx / l * j, y: q.y + ny / l * j }); }
+      rim = pts;
+      // the rim as cracks, broken in three or four places
+      const n = pts.length, cuts = [0]; const nc = 5 + Math.floor(Rn() * 3);
+      for (let i = 1; i < nc; i++) cuts.push(Math.floor(n * (i / nc + (Rn() - 0.5) * 0.12)));
+      cuts.push(n);
+      for (let i = 0; i < cuts.length - 1; i++) {
+        const seg = pts.slice(cuts[i] + 1, cuts[i + 1] - 1); if (seg.length < 3 || Rn() < 0.28) continue;
+        const L = seg.length, w = (0.9 + Rn() * 0.8) * k;
+        out.push({ p: seg, ws: seg.map((_, t) => w * Math.pow(Math.sin(Math.PI * (0.04 + 0.92 * t / (L - 1))), 0.6) * (0.75 + Rn() * 0.5) + 0.4) });
+      }
+    }
+    const N = o.n, a0 = Rn() * Math.PI * 2, rad = [];
+    for (let i = 0; i < N; i++) {
+      const an = a0 + i * 2 * Math.PI / N + (Rn() - 0.5) * (2 * Math.PI / N) * 0.55, s = exitAt(an);
+      const side = Math.abs(Math.cos(an));
+      const L = o.len * (0.5 + Rn() * 0.62) * (0.72 + 0.4 * side);
+      const c = walk(s.x, s.y, an, L, (3.2 + Rn() * 1.8) * k);
+      rad.push(c ? { c, an } : null);
+      if (!c) continue;
+      out.push(c);
+      // forks
+      const nb = c.p.length > 4 ? (Rn() < 0.78 ? 1 : 0) + (Rn() < 0.32 ? 1 : 0) : 0;
+      for (let b = 0; b < nb; b++) {
+        const j = Math.max(1, Math.min(c.p.length - 2, Math.floor(c.p.length * (0.22 + Rn() * 0.45))));
+        const q = c.p[j], q0 = c.p[j - 1], hh = Math.atan2(q.y - q0.y, q.x - q0.x), sd = Rn() < 0.5 ? -1 : 1;
+        const br = walk(q.x, q.y, hh + sd * (0.38 + Rn() * 0.42), L * (1 - j / c.p.length) * (0.32 + Rn() * 0.4), c.ws[j] * 0.78);
+        if (br) {
+          out.push(br);
+          if (br.p.length > 4 && Rn() < 0.35) { const m = Math.floor(br.p.length / 2), qq = br.p[m]; const t = walk(qq.x, qq.y, hh - sd * (0.3 + Rn() * 0.4), L * 0.18, br.ws[m] * 0.8); if (t) out.push(t); }
+        }
+      }
+    }
+    // short fractures off the rim
+    if (rim) for (let i = 0; i < o.micro; i++) {
+      const j = Math.floor(Rn() * rim.length), q = rim[j], an = Math.atan2(q.y - (box.y + box.h / 2), (q.x - (box.x + box.w / 2)) * (box.h / box.w) * 1.6);
+      const c = walk(q.x, q.y, an + (Rn() - 0.5) * 1.7, (8 + Rn() * 26) * k, (1 + Rn()) * k);
+      if (c) out.push(c);
+    }
+    // broken rings close to the badge, each joining two neighbouring cracks
+    const facets = [];
+    [[1, 0.62], [2, 0.36]].forEach(([r, pr]) => {
+      const rx = box.w / 2 + m + (16 + 24 * r) * k, ry = box.h / 2 + m + (14 + 20 * r) * k, hits = [];
+      rad.forEach((e, i) => {
+        if (!e) { hits.push(null); return; }
+        const pts = e.c.p; let j = 0;
+        while (j < pts.length && Math.pow((pts[j].x - cx) / rx, 2) + Math.pow((pts[j].y - cy) / ry, 2) < 1) j++;
+        hits.push(j < pts.length ? { q: pts[j], j } : null);
+      });
+      for (let i = 0; i < N; i++) {
+        const A = hits[i], B = hits[(i + 1) % N];
+        if (!A || !B || Rn() > pr) continue;
+        const aA = Math.atan2((A.q.y - cy) / ry, (A.q.x - cx) / rx); let aB = Math.atan2((B.q.y - cy) / ry, (B.q.x - cx) / rx);
+        while (aB < aA) aB += Math.PI * 2;
+        if (aB - aA > 1.9) continue;
+        const m = 3 + Math.floor(Rn() * 3), p = [A.q];
+        let bad = false;
+        for (let t = 1; t < m; t++) {
+          const f = t / m, a = aA + (aB - aA) * (f + (Rn() - 0.5) * 0.12), j = 1 + (Rn() - 0.5) * 0.16;
+          const x = cx + Math.cos(a) * rx * j, y = cy + Math.sin(a) * ry * j;
+          if (stop(x, y) || inRect(x, y, rb, 3)) { bad = true; break; }
+          p.push({ x, y });
+        }
+        if (bad) continue;
+        p.push(B.q);
+        const w = (1.1 + Rn() * 0.7) * k, n = p.length;
+        out.push({ p, ws: p.map((q, t) => w * Math.sin(Math.PI * (0.08 + 0.84 * t / (n - 1))) + 0.3 * k) });
+        if (r === 1) {
+          // the slab between: its two cracks back to the badge, the ring, a faint tilt of light
+          const ra = rad[i].c.p.slice(0, A.j + 1), rb = rad[(i + 1) % N].c.p.slice(0, B.j + 1).reverse();
+          facets.push({ poly: ra.concat(p.slice(1, -1), rb), tone: Rn() < 0.5 ? -1 : 1 });
+        }
+      }
+    });
+    return { cracks: out, facets, box, rim, m };
+  }
+  function ribbon(ctx, c, dy) {
+    const p = c.p, n = p.length, L = [], Rr = [];
+    for (let i = 0; i < n; i++) {
+      const a = p[Math.max(0, i - 1)], b = p[Math.min(n - 1, i + 1)];
+      let nx = a.y - b.y, ny = b.x - a.x; const m = Math.hypot(nx, ny) || 1; nx /= m; ny /= m;
+      const h = c.ws[i] / 2;
+      L.push(p[i].x + nx * h, p[i].y + ny * h + dy); Rr.push(p[i].x - nx * h, p[i].y - ny * h + dy);
+    }
+    ctx.moveTo(L[0], L[1]);
+    for (let i = 2; i < L.length; i += 2) ctx.lineTo(L[i], L[i + 1]);
+    for (let i = Rr.length - 2; i >= 0; i -= 2) ctx.lineTo(Rr[i], Rr[i + 1]);
+    ctx.closePath();
+  }
+  const DPR = () => Math.min(2, window.devicePixelRatio || 1);
+  function sizeCanvas(cv, w, h) {
+    const d = DPR(); cv.width = Math.round(w * d); cv.height = Math.round(h * d); cv.style.width = w + 'px'; cv.style.height = h + 'px';
+    const ctx = cv.getContext('2d'); ctx.setTransform(d, 0, 0, d, 0, 0); return ctx;
+  }
+  // the ground: the slabs, the lit lower lip of each crack (light from above), then the dark gap, fading toward the tips
+  function paintGround(cv, f, C, reach) {
+    const ctx = cv.getContext('2d'), light = mode() === 'light';
+    ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, cv.width, cv.height); ctx.restore();
+    const fade = (a0, a1) => { const g = ctx.createRadialGradient(C.x, C.y, 0, C.x, C.y, reach); g.addColorStop(0, a0); g.addColorStop(1, a1); return g; };
+    ctx.beginPath(); f.cracks.forEach(c => ribbon(ctx, c, light ? 1.1 : 1));
+    ctx.fillStyle = light ? fade('rgba(255,255,255,.95)', 'rgba(255,255,255,.35)') : fade('rgba(255,234,208,.26)', 'rgba(255,234,208,.05)');
+    ctx.fill();
+    ctx.beginPath(); f.cracks.forEach(c => ribbon(ctx, c, 0));
+    ctx.fillStyle = light ? fade('rgba(38,28,18,.74)', 'rgba(38,28,18,.12)') : fade('rgba(0,0,0,.95)', 'rgba(0,0,0,.55)');
+    ctx.fill();
+  }
+  // the accent's light down in the cracks, strongest where they leave the badge
+  function paintGlow(cv, f, C, reach) {
+    const ctx = cv.getContext('2d'), a = RGB[acc].join(',');
+    ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, cv.width, cv.height); ctx.restore();
+    const g = ctx.createRadialGradient(C.x, C.y, 0, C.x, C.y, reach);
+    g.addColorStop(0, 'rgba(' + a + ',1)'); g.addColorStop(0.5, 'rgba(' + a + ',.45)'); g.addColorStop(1, 'rgba(' + a + ',0)');
+    ctx.beginPath(); f.cracks.forEach(c => ribbon(ctx, { p: c.p, ws: c.ws.map(w => w * 0.5) }, 0));
+    ctx.shadowColor = 'rgba(' + a + ',.9)'; ctx.shadowBlur = 6; ctx.fillStyle = g; ctx.fill();
+  }
+
+  // ---------- the opening's ground ----------
+  const lk = $('#lk'), icon = $('#lkicon'), col = $('#lkcol'), words = $('#words'), cue = $('#cue');
+  const cvG = $('#ground'), cvL = $('#glow'), cvF = $('#fx'), bloom = $('#bloom'), dust = $('#dust'), quake = $('#quake');
+  let H = null;
+  function rel(e) { const r = e.getBoundingClientRect(), h = hero.getBoundingClientRect(); return { x: r.left - h.left, y: r.top - h.top, w: r.width, h: r.height }; }
+  function heroGround() {
+    const w = hero.clientWidth, h = hero.clientHeight, ri = rel(icon), rc = rel(col);
+    const box = { x: ri.x - 4, y: Math.min(ri.y, rc.y) - 4, w: rc.x + rc.w - ri.x + 8, h: Math.max(ri.y + ri.h, rc.y + rc.h) - Math.min(ri.y, rc.y) + 8 };
+    const C = { x: ri.x + ri.w + (rc.x - ri.x - ri.w) / 2, y: ri.y + ri.h / 2 };
+    const k = Math.max(0.62, Math.min(1.2, w / 1280 * 1.1));
+    const wr = rel(words), cr = rel(cue);
+    const f = fractures({ seed: 1028, k, box, c: C, n: w < 700 ? 8 : 10, micro: w < 700 ? 5 : 8, rim: true, len: Math.min(w * 0.42, 540), b: { l: -40, r: w + 40, t: -40, b: h + 40 }, keep: [wr, cr] });
+    const reach = Math.max(w, h) * 0.75;
+    H = { w, h, box, C, k, f, reach, glowR: Math.max(170, box.w * 0.62) };
+    [cvG, cvL].forEach(cv => sizeCanvas(cv, w, h));
+    paintGround(cvG, f, C, reach); paintGlow(cvL, f, C, H.glowR);
+    const bw = Math.max(box.w * 2.1, 520), bh = Math.max(box.h * 3.6, 380);
+    Object.assign(bloom.style, { width: bw + 'px', height: bh + 'px', left: C.x - bw / 2 + 'px', top: C.y - bh / 2 + 'px' });
+    const dw = box.w * 1.5, dh = box.h * 2.2;
+    Object.assign(dust.style, { width: dw + 'px', height: dh + 'px', left: box.x + box.w / 2 - dw / 2 + 'px', top: box.y + box.h / 2 - dh / 2 + 'px' });
+    cvL.style.opacity = done ? getComputedStyle(R).getPropertyValue('--glow-rest') : cvL.style.opacity;
+    return H;
+  }
+  function repaintGlow() { if (H) paintGlow(cvL, H.f, H.C, H.glowR); endPaint(); }
+  function repaint() { if (H) { paintGround(cvG, H.f, H.C, H.reach); paintGlow(cvL, H.f, H.C, H.glowR); } endPaint(); }
+
+  // the chips knocked loose at the hit: thrown out and up, falling, gone in under a second (seeded, so a moment can be held)
+  let chips = [];
+  function makeChips() {
+    const Rn = mulberry(41), b = H.box, k = H.k, n = H.w < 700 ? 14 : 22; chips = [];
+    for (let i = 0; i < n; i++) {
+      const s = Rn(); let x, y, nx, ny;
+      if (s < 0.55) { x = b.x + Rn() * b.w; y = b.y + b.h; nx = (x - H.C.x) / b.w; ny = 0.3; }
+      else if (s < 0.78) { x = b.x; y = b.y + Rn() * b.h; nx = -1; ny = 0; } else { x = b.x + b.w; y = b.y + Rn() * b.h; nx = 1; ny = 0; }
+      const v = (200 + Rn() * 380) * k, an = Math.atan2(ny - 0.9 - Rn() * 0.6, nx + (Rn() - 0.5) * 0.8);
+      const m = 4 + Math.floor(Rn() * 2), sz = (1.6 + Rn() * 3.6) * k, verts = [];
+      for (let j = 0; j < m; j++) { const a = j / m * Math.PI * 2 + Rn() * 0.6, r = sz * (0.6 + Rn() * 0.6); verts.push([Math.cos(a) * r, Math.sin(a) * r]); }
+      chips.push({ x, y, vx: Math.cos(an) * v, vy: Math.sin(an) * v, r0: Rn() * 6, vr: (Rn() - 0.5) * 18, verts, life: 0.45 + Rn() * 0.4, tone: Rn() });
+    }
+  }
+  function drawChips(ms) {
+    if (!cvF.width) return;
+    const ctx = cvF.getContext('2d'), t = ms / 1000, g = 1700 * H.k, light = mode() === 'light';
+    ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, cvF.width, cvF.height); ctx.restore();
+    if (t < 0) return;
+    chips.forEach(c => {
+      if (t > c.life) return;
+      const x = c.x + c.vx * t, y = c.y + c.vy * t + 0.5 * g * t * t, a = 1 - Math.pow(t / c.life, 2);
+      ctx.save(); ctx.translate(x, y); ctx.rotate(c.r0 + c.vr * t); ctx.globalAlpha = a;
+      ctx.beginPath(); c.verts.forEach((v, i) => i ? ctx.lineTo(v[0], v[1]) : ctx.moveTo(v[0], v[1])); ctx.closePath();
+      ctx.fillStyle = light ? (c.tone < 0.5 ? '#9E958A' : '#B9B1A6') : (c.tone < 0.5 ? '#3E3832' : '#57504A'); ctx.fill();
+      ctx.restore();
+    });
+  }
+
+  // ---------- the smash: the app's landing (IntroTimeline.swift), into the stone ----------
+  const bz = (a, b, c, d) => 'cubic-bezier(' + a + ',' + b + ',' + c + ',' + d + ')';
+  const FALL = bz(.55, 0, .85, .36), SETTLE = bz(.2, .9, .35, 1), SQUASH = bz(.45, 0, .35, 1), SWELL = bz(.2, .8, .3, 1), ARRIVE = bz(.2, .9, .3, 1);
+  const anims = []; let playing = false, done = false, begun = false, early = false, chipRAF = 0;
+  const restOf = v => parseFloat(getComputedStyle(R).getPropertyValue(v)) || 0.5;
+  function settleHero() {
+    hero.classList.remove('pre'); done = true; playing = false;
+    cvL.style.opacity = restOf('--glow-rest'); bloom.style.opacity = ''; cancelAnimationFrame(chipRAF); cvF.width = cvF.height = 0;
+  }
+  function finish() { anims.forEach(a => { try { a.finish(); a.cancel(); } catch (e) {} }); anims.length = 0; settleHero(); }
+  function smash() {
+    heroGround();
+    if (reduced) { settleHero(); return; }
+    if (!calm) { makeChips(); sizeCanvas(cvF, H.w, H.h); }
+    const A = (e, k, o) => { const a = e.animate(k, Object.assign({ fill: 'both' }, o)); anims.push(a); return a; }, L = H.k;
+    // the lockup: from 1.3x and up, the hit at 0.40 s, the squash to .955, a breath over, settled
+    const drop = calm ? -14 * L : -46 * L, from = calm ? 1.1 : 1.32;
+    A(lk, [{ offset: 0, transform: 'translateY(' + drop + 'px) scale(' + from + ')', easing: FALL }, { offset: .4667, transform: 'translateY(0px) scale(1)', easing: SETTLE },
+           { offset: .58, transform: 'translateY(0px) scale(.955)', easing: SQUASH }, { offset: .78, transform: 'translateY(0px) scale(1.008)', easing: 'ease-out' },
+           { offset: 1, transform: 'translateY(0px) scale(1)' }], { duration: 600, delay: 120 });
+    A(lk, [{ offset: 0, opacity: 0 }, { offset: .16, opacity: 1 }, { offset: 1, opacity: 1 }], { duration: 600, delay: 120 });
+    // the ground takes the jolt
+    const jx = [0, 1, -.8, .5, -.3, .1, 0], jy = [0, 4.2, -3, 1.9, -1, .4, 0], jo = [0, .1, .24, .4, .58, .78, 1];
+    if (!calm) A(quake, jo.map((o, i) => ({ offset: o, transform: 'translate(' + (jx[i] * L) + 'px,' + (jy[i] * L) + 'px)' })), { duration: 340, delay: 400, easing: 'linear', fill: 'none' });
+    // the light swells from where the icon meets the name, then rests
+    const br = restOf('--bloom-rest');
+    A(bloom, [{ offset: 0, opacity: 0, transform: 'scale(.4)', easing: SWELL }, { offset: .08, opacity: 1, easing: SWELL }, { offset: .3, opacity: .9, transform: 'scale(1.05)', easing: SWELL }, { offset: 1, opacity: br, transform: 'scale(1)' }], { duration: 1300, delay: 400 });
+    A(dust, [{ offset: 0, opacity: 0, transform: 'scale(.7)' }, { offset: .14, opacity: 1 }, { offset: 1, opacity: 0, transform: 'scale(1.6)' }], { duration: 900, delay: 400, easing: bz(.15, .7, .3, 1) });
+    // the cracks race out from the hit; the light catches in them, then settles
+    const cl = (r) => 'circle(' + r + 'px at ' + H.C.x.toFixed(1) + 'px ' + H.C.y.toFixed(1) + 'px)', far = Math.hypot(Math.max(H.C.x, H.w - H.C.x), Math.max(H.C.y, H.h - H.C.y));
+    [cvG, cvL].forEach(cv => A(cv, [{ clipPath: cl(0) }, { clipPath: cl(far) }], { duration: 460, delay: 400, easing: bz(.1, .72, .25, 1) }));
+    A(cvL, [{ offset: 0, opacity: 0 }, { offset: .1, opacity: 1, easing: SWELL }, { offset: .4, opacity: .85 }, { offset: 1, opacity: restOf('--glow-rest') }], { duration: 1400, delay: 400 });
+    // then the words: You vs. You, the line word by word, the second line
+    const rise = (e, delay, dur) => A(e, [{ opacity: 0, transform: 'translateY(' + (10 * Math.max(1, L)) + 'px)' }, { opacity: 1, transform: 'translateY(0px)' }], { duration: dur, delay, easing: ARRIVE });
+    rise($('#tg'), 940, 420);
+    $$('#words .w').forEach((w, i) => rise(w, 1120 + i * 50, 440));
+    rise($('#l2'), 1480, 460);
+    rise(cue, 1700, 500);
+    hero.classList.remove('pre');
+    playing = true;
+    const t0 = performance.now();
+    const tick = now => { const t = now - t0 - 400; drawChips(t); if (t < 1000) chipRAF = requestAnimationFrame(tick); else cvF.width = cvF.height = 0; };
+    if (!calm) chipRAF = requestAnimationFrame(tick);
+    Promise.all(anims.map(a => a.finished)).then(() => { if (playing) { anims.forEach(a => a.cancel()); anims.length = 0; settleHero(); } }, () => {});
+  }
+  const skip = () => { if (playing) finish(); else if (!begun) early = true; };
+  addEventListener('pointerdown', skip, { passive: true });
+  addEventListener('keydown', skip);
+  const go = () => { if (begun) return; begun = true; try { smash(); if (early) finish(); } catch (e) { settleHero(); } };
+  const iconReady = icon.decode ? icon.decode().catch(() => {}) : Promise.resolve();
+  const whenSeen = f => {
+    if (D.visibilityState !== 'hidden') { f(); return; }
+    // loaded in a hidden tab: wait to be seen (and lay the ground anyway after a few seconds)
+    const h = () => { if (D.visibilityState !== 'hidden') { D.removeEventListener('visibilitychange', h); f(); } };
+    D.addEventListener('visibilitychange', h); setTimeout(f, 4000);
+  };
+  Promise.race([Promise.all([D.fonts ? D.fonts.ready : 0, iconReady]), new Promise(r => setTimeout(r, 900))]).then(() => whenSeen(() => requestAnimationFrame(go)));
+  setTimeout(() => whenSeen(go), 1400);
+
+  // the end: the same badge, set into the same stone, still
+  function endPaint() {
+    const box = $('#endlock'), cv = $('#endground'); if (!box.offsetWidth) return;
+    const im = box.querySelector('img'), cl = box.querySelector('.col');
+    const W = Math.min(620, R.clientWidth), Hh = 300, ox = (W - box.offsetWidth) / 2, oy = (Hh - box.offsetHeight) / 2;
+    cv.style.left = -ox + 'px'; cv.style.top = -oy + 'px';
+    sizeCanvas(cv, W, Hh);
+    const r1 = { x: ox + im.offsetLeft, y: oy + im.offsetTop, w: im.offsetWidth, h: im.offsetHeight }, r2 = { x: ox + cl.offsetLeft, y: oy + cl.offsetTop, w: cl.offsetWidth, h: cl.offsetHeight };
+    const b = { x: r1.x - 3, y: r1.y - 3, w: r2.x + r2.w - r1.x + 6, h: r1.h + 6 }, C = { x: r1.x + r1.w + (r2.x - r1.x - r1.w) / 2, y: r1.y + r1.h / 2 };
+    const f = fractures({ seed: 77, k: 0.7, box: b, c: C, n: 9, micro: 6, rim: true, len: 150, b: { l: 2, r: W - 2, t: 4, b: oy + box.offsetHeight + 26 }, keep: [] });
+    paintGround(cv, f, C, 240);
+    // a faint light in the end's cracks too
+    const ctx = cv.getContext('2d'), a = RGB[acc].join(','), g = ctx.createRadialGradient(C.x, C.y, 0, C.x, C.y, 120);
+    g.addColorStop(0, 'rgba(' + a + ',' + (mode() === 'light' ? .35 : .6) + ')'); g.addColorStop(1, 'rgba(' + a + ',0)');
+    ctx.beginPath(); f.cracks.forEach(c => ribbon(ctx, { p: c.p, ws: c.ws.map(w => w * 0.5) }, 0)); ctx.fillStyle = g; ctx.fill();
+  }
+  (D.fonts ? D.fonts.ready : Promise.resolve()).then(() => { try { endPaint(); } catch (e) {} });
+
+  // ---------- the phone: it turns to face you, then walks through the app ----------
+  const stage = $('#stage'), p3 = $('#p3'), ph = $('#ph'), story = $('#top'), glare = $('#glare');
+  const shots = $$('#screen .scr'), capEls = $$('.cap'), ticks = $$('.ticks i'), N = 6;
+  let G = null, lastW = 0, tops = {};
+  // the turn follows the scroll: the pose he showed (the phone turned so its left edge faces you, leaning a little, his
+  // render), then a hand bringing it round, just past square, and settling flat toward you
+  let turned = false, lastP = -1;
+  const sm = t => t * t * (3 - 2 * t), clamp = v => Math.min(1, Math.max(0, v));
+  function pose(p) {
+    const K = [[G.dx, 0, 8, 33, 9], [G.dx * 0.06, -G.lift, -0.8, -3.5, -1.2], [0, 0, 0, 0, 0]], M = 0.72;
+    const a = p < M ? 0 : 1, e = sm(clamp(a ? (p - M) / (1 - M) : p / M));
+    const v = K[a].map((x, i) => x + (K[a + 1][i] - x) * e);
+    return 'translate3d(' + v[0].toFixed(1) + 'px,' + v[1].toFixed(1) + 'px,0) rotateZ(' + v[2].toFixed(2) + 'deg) rotateY(' + v[3].toFixed(2) + 'deg) rotateX(' + v[4].toFixed(2) + 'deg)';
+  }
+  function turnTo(p) {
+    if (p === lastP) return; lastP = p;
+    ph.style.transform = pose(p);
+    // a catch of light runs across the glass while it turns
+    const gp = clamp((p - 0.1) / 0.8);
+    glare.style.opacity = gp > 0 && gp < 1 ? Math.sin(Math.PI * gp).toFixed(3) : 0;
+    glare.style.transform = 'translateX(' + (-30 + 64 * gp).toFixed(1) + '%)';
+    const on = p >= 0.92;
+    if (on !== turned) { turned = on; stage.classList.toggle('turned', on); }
+  }
+  function layout() {
+    const vw = R.clientWidth, sv = Math.round(probe.getBoundingClientRect().height || innerHeight);
+    lastW = vw;
+    const navB = bar.getBoundingClientRect().bottom;
+    const desk = (vw >= 880 && sv >= 560) || (vw >= 600 && vw > sv * 1.25);
+    stage.classList.toggle('desk', desk); stage.classList.toggle('phone', !desk);
+    let phH, phW, phL, phT, capL, capT, capW;
+    if (desk) {
+      const avail = sv - navB - 34 - 34;
+      phH = Math.min(avail, 820); phW = phH * 430 / 902;
+      const gap = Math.min(120, Math.max(56, vw * 0.07));
+      capW = Math.min(420, Math.max(250, vw - phW - gap - 140));
+      phL = Math.max(40, (vw - (phW + gap + capW)) / 2); phT = navB + 34 + (avail - phH) / 2;
+      capL = phL + phW + gap; capT = phT + phH / 2;
+    } else {
+      const capH = 128, avail = sv - navB - 18 - 22 - capH - 18;
+      phH = Math.min(avail, 640); phW = phH * 430 / 902;
+      phL = (vw - phW) / 2; phT = navB + 18;
+      capL = Math.max(20, (vw - 400) / 2); capW = vw - 2 * capL; capT = phT + phH + 22;
+    }
+    // the turn runs from just before the stage pins to most of a view after; Today holds, then the steps
+    // the opening leaves and the phone comes in over the first I of scroll, in one pinned frame; then the turn, then Today
+    const I = Math.round(sv * 0.7), T0 = Math.round(I * 0.8), T1 = T0 + Math.round(sv * (desk ? 0.85 : 0.8)), S0 = T1 + Math.round(sv * 0.35);
+    const step = Math.round(sv * (desk ? 0.55 : 0.5)), tail = Math.round(sv * 0.25);
+    // while it is turned away it stands in the middle of the window; facing you it makes room for the words
+    G = { vw, sv, desk, phW, phH, I, T0, T1, S0, step, lift: phH * 0.03, dx: desk ? (vw - phW) / 2 - phL : 0 };
+    lastP = -1; lastE = -1;
+    R.style.setProperty('--sv', sv + 'px');
+    story.style.setProperty('--track', (sv + S0 + N * step + tail) + 'px');
+    Object.entries({ '--phL': phL, '--phT': phT, '--phW': phW, '--phH': phH, '--persp': phH * 2.4, '--u': phW / 430, '--capL': capL, '--capT': capT, '--capW': capW })
+      .forEach(([k, v]) => stage.style.setProperty(k, v + 'px'));
+    const sy = scrollY;
+    tops = { story: story.getBoundingClientRect().top + sy };
+    ['privacy', 'colors', 'faq', 'get'].forEach(id => { tops[id] = $('#' + id).getBoundingClientRect().top + sy; });
+  }
+  const stepTop = k => tops.story + (k === 0 ? G.T1 + G.sv * 0.15 : G.S0 + (k - 0.5) * G.step);
+
+  let cur = -1, part = null, warmed = false, lastE = -1;
+  const pills = $$('.sects a, .menu a'), menuLbl = $('#menulbl'), NAMES = { features: 'Features', privacy: 'Privacy', colors: 'Colors', faq: 'FAQ' };
+  function update() {
+    const sy = scrollY, y = sy - tops.story;
+    // the page holds still: the logo and its line fade and rise away while the phone glides up into the same frame
+    const e = clamp(y / G.I);
+    if (e !== lastE) {
+      lastE = e;
+      const out = sm(clamp(e / 0.5)), inn = sm(clamp((e - 0.12) / 0.88));
+      hero.style.transform = e ? 'translate3d(0,' + (-out * G.sv * (calm ? 0.06 : 0.24)).toFixed(1) + 'px,0)' : '';
+      hero.style.opacity = (1 - out).toFixed(3);
+      hero.style.visibility = out >= 1 ? 'hidden' : '';
+      p3.style.transform = inn < 1 ? 'translate3d(0,' + ((1 - inn) * G.sv * (calm ? 0.12 : 0.62)).toFixed(1) + 'px,0)' : '';
+      p3.style.opacity = sm(clamp((e - 0.1) / 0.45)).toFixed(3);
+    }
+    // the phone turns with the scroll
+    turnTo(reduced ? 1 : clamp((y - G.T0) / (G.T1 - G.T0)));
+    const k = y < G.S0 ? 0 : Math.min(N, Math.floor((y - G.S0) / G.step) + 1);
+    if (k !== cur) show(k);
+    if (!warmed && y > 4) { warmed = true; shots.forEach(im => { im.loading = 'eager'; if (im.decode) im.decode().catch(() => {}); }); }
+    const line = sy + G.sv * 0.45;
+    let np = y > G.I * 0.6 ? 'features' : '';
+    ['privacy', 'colors', 'faq'].forEach(id => { if (tops[id] < line) np = id; });
+    if (tops.get < sy + G.sv * 0.6) np = '';
+    if (np !== part) {
+      part = np;
+      pills.forEach(a => a.setAttribute('aria-current', a.dataset.part === np ? 'true' : 'false'));
+      menuLbl.textContent = NAMES[np] || 'Explore';
+    }
+    return { y: Math.round(y), step: k, turned, part: np };
+  }
+  let swapTimer = 0;
+  function show(k) {
+    const prev = cur; cur = k;
+    stage.dataset.step = k;
+    const incoming = shots[k], outgoing = shots[prev];
+    shots.forEach(el => { el.style.zIndex = el === incoming ? 4 : el === outgoing ? 3 : 2; });
+    if (incoming) incoming.classList.add('on');
+    clearTimeout(swapTimer);
+    const settle = () => shots.forEach(el => { if (el !== incoming) el.classList.remove('on'); });
+    if (R.classList.contains('instant')) settle();
+    else (incoming && incoming.decode ? incoming.decode().catch(() => {}) : Promise.resolve()).then(() => { if (cur === k) swapTimer = setTimeout(settle, 320); });
+    capEls.forEach(c => c.classList.toggle('on', +c.dataset.i === k));
+    ticks.forEach((t, i) => { t.classList.toggle('on', i === k); t.classList.toggle('done', i < k); });
+  }
+  let ticking = false;
+  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(() => { ticking = false; update(); }); } }, { passive: true });
+  let rz = 0;
+  addEventListener('resize', () => {
+    if (R.clientWidth === lastW) return;
+    clearTimeout(rz); rz = setTimeout(() => { layout(); update(); if (done || !begun) { try { heroGround(); } catch (e) {} } endPaint(); }, 120);
+  }, { passive: true });
+  layout(); update();
+  const relayout = () => { layout(); update(); };
+  if (D.fonts) D.fonts.ready.then(relayout);
+  addEventListener('load', relayout);
+
+  // ---------- the bar: sections, the menu on a phone ----------
+  const menuBtn = $('#menubtn'), menu = $('#menu');
+  const closeMenu = () => { menu.hidden = true; menuBtn.setAttribute('aria-expanded', 'false'); };
+  menuBtn.addEventListener('click', e => { e.stopPropagation(); const open = menu.hidden; menu.hidden = !open; menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false'); if (open) menu.querySelector('a').focus({ preventScroll: true }); });
+  D.addEventListener('click', e => { if (!menu.hidden && !menu.contains(e.target)) closeMenu(); });
+  D.addEventListener('keydown', e => { if (e.key === 'Escape' && !menu.hidden) { closeMenu(); menuBtn.focus(); } });
+  const go2 = (id, ev) => {
+    ev.preventDefault(); closeMenu();
+    const top = id === 'features' ? stepTop(0) : id === 'top' ? 0 : $('#' + id).getBoundingClientRect().top + scrollY - (id === 'get' ? 0 : 70);
+    scrollTo({ top, behavior: calm ? 'auto' : 'smooth' });
+    history.replaceState(null, '', id === 'top' ? location.pathname + location.search : '#' + id);
+  };
+  $$('a[href^="#"]:not([data-toast])').forEach(a => a.addEventListener('click', ev => go2(a.getAttribute('href').slice(1) || 'top', ev)));
+  $$('.qa details').forEach(d => d.addEventListener('toggle', () => { layout(); update(); }));
+  if (location.hash === '#features') requestAnimationFrame(() => scrollTo({ top: stepTop(0), behavior: 'auto' }));
+
+  // ---------- the things not built yet say so ----------
+  const toastEl = $('#toast'), toastMsg = $('#toastmsg'); let toastT = 0;
+  function toast(msg) {
+    toastMsg.textContent = msg; toastEl.classList.add('show');
+    clearTimeout(toastT); toastT = setTimeout(() => toastEl.classList.remove('show'), 3200);
+  }
+  $$('[data-toast]').forEach(b => b.addEventListener('click', ev => {
+    ev.preventDefault();
+    toast(b.classList.contains('dl') ? 'Rematch is in testing. Coming soon to the App Store.' : 'Coming soon.');
+  }));
+
+  // ---------- the social words: struck through one by one, quickly, each time the section is reached ----------
+  const strikes = $$('#nots .x');
+  let struck = true;
+  if ('IntersectionObserver' in window) {
+    let run = 0, shown = false;
+    const reset = () => { run++; struck = false; strikes.forEach(x => { x.style.setProperty('--k', 0); x.classList.remove('cut'); }); };
+    const strikeTo = (x, dur, delay, id) => {
+      const t0 = performance.now() + delay;
+      const f = now => { if (id !== run) return; const q = clamp((now - t0) / dur), e = 1 - Math.pow(1 - q, 3); x.style.setProperty('--k', e.toFixed(3)); if (q > 0.3) x.classList.add('cut'); if (q < 1) requestAnimationFrame(f); };
+      requestAnimationFrame(f);
+    };
+    const play = () => { const id = ++run; struck = true; strikes.forEach((x, i) => strikeTo(x, 520, 220 + i * 280, id)); };
+    reset();
+    new IntersectionObserver(es => es.forEach(e => {
+      if (e.intersectionRatio >= 0.5 && !shown) { shown = true; play(); }
+      else if (!e.isIntersecting && shown) { shown = false; reset(); }
+    }), { threshold: [0, 0.5] }).observe($('#nots'));
+  } else strikes.forEach(x => x.classList.add('cut'));
+
+  // check hooks for webshot (it runs no frames): put the page in a state, then shoot
+  window.__rematch = {
+    endIntro() { go(); finish(); return 'intro ended'; },
+    introAt(ms) { if (reduced) reduced = false; if (!begun) { begun = true; smash(); } anims.forEach(x => { x.pause(); x.currentTime = ms; }); cancelAnimationFrame(chipRAF); drawChips(ms - 400); return anims.length; },
+    motion() { reduced = false; calm = false; layout(); return update(); },
+    turnAt(p) { R.classList.add('instant'); scrollTo({ top: tops.story + G.T0 + p * (G.T1 - G.T0), behavior: 'instant' }); return update(); },
+    async setStep(k) { R.classList.add('instant'); scrollTo({ top: stepTop(k), behavior: 'instant' }); const r = update(); const im = shots[k]; if (im) { im.loading = 'eager'; try { await im.decode(); } catch (e) {} } return r; },
+    scrollToPart(id) { R.classList.add('instant'); scrollTo({ top: $('#' + id).getBoundingClientRect().top + scrollY - 70, behavior: 'instant' }); return update(); },
+    async pickAccent(a) { R.classList.add('instant'); applyAccent(a); await new Promise(r => setTimeout(r, 400)); return a; },
+    setMode(m) { applyMode(m); return m; },
+    openMenu() { menu.hidden = false; menuBtn.setAttribute('aria-expanded', 'true'); return true; },
+    toast(m) { toastEl.style.transition = 'none'; toast(m || 'Rematch is in testing. Coming soon to the App Store.'); return true; },
+    // decode every picture in view (webshot paints before a lazy or async image is ready)
+    async settle() { const im = $$('img').filter(i => { const r = i.getBoundingClientRect(); return r.bottom > -50 && r.top < innerHeight + 50 && getComputedStyle(i).opacity !== '0'; }); await Promise.all(im.map(i => { i.loading = 'eager'; return (i.decode ? i.decode() : Promise.resolve()).catch(() => {}); })); await new Promise(r => setTimeout(r, 120)); return im.length; },
+    state() { return Object.assign({}, G, { at: cur, part, turned, calm, acc, mode: mode(), struck, cracks: H && H.f.cracks.length }); }
+  };
+})();
+</script>
+</body>
+</html>
