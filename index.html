@@ -69,8 +69,7 @@
 
 html{background:var(--g);scrollbar-width:none;-webkit-text-size-adjust:100%}
 html::-webkit-scrollbar,body::-webkit-scrollbar,#page::-webkit-scrollbar{display:none}
-/* on iPhone and iPad the page scrolls inside its own full-window frame: Safari's toolbar then never shrinks or grows mid-swipe,
-   which on iOS 26 shifts a pinned scene by about 10 px (WebKit 297779) right where the opening leaves */
+/* with ?inner the page scrolls inside its own full-window frame (Safari's toolbar then never hides), kept to compare */
 .inner,.inner body{height:100%;overflow:hidden;overscroll-behavior:none}
 .inner #page{position:fixed;inset:0;z-index:1;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;scrollbar-width:none}
 body{margin:0;background:var(--g);color:var(--ink);font:400 17px/1.4 "Mona",system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;transition:background-color .35s ease,color .35s ease}
@@ -145,7 +144,7 @@ button{font:inherit;color:inherit}
 .bloom,.dust{position:absolute;left:0;top:0;border-radius:50%;pointer-events:none}
 .bloom{opacity:var(--bloom-rest);background:radial-gradient(closest-side,rgb(var(--acc-rgb) / var(--b0)) 0,rgb(var(--acc-rgb) / var(--b1)) 42%,rgb(var(--acc-rgb) / var(--b2)) 72%,rgb(var(--acc-rgb) / 0) 100%)}
 .dust{opacity:0;background:radial-gradient(closest-side,transparent 38%,var(--dust) 62%,transparent 100%)}
-.hero-in{position:relative;height:100%;box-sizing:border-box;padding:84px var(--gut-r) 72px var(--gut);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.hero-in{position:relative;height:var(--sv,100svh);box-sizing:border-box;padding:84px var(--gut-r) 72px var(--gut);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
 .lk{--L:clamp(1px,.1724vw,2.2px);display:flex;align-items:center;gap:calc(var(--L)*15);transform-origin:calc(var(--L)*36) 50%}
 .lk-icon{width:calc(var(--L)*72);height:calc(var(--L)*72);border-radius:22.46%;box-shadow:0 calc(var(--L)*12) calc(var(--L)*26) rgba(0,0,0,.32)}
 .lk-col{display:flex;flex-direction:column;gap:calc(var(--L)*6);text-align:left}
@@ -159,7 +158,7 @@ button{font:inherit;color:inherit}
 .words .w{display:inline-block}
 .words .l2{margin-top:clamp(10px,1.4vh,16px);font:400 clamp(17px,1.55vw,21px)/1.4 "Mona",sans-serif;color:var(--ink2)}
 .hero .stone{position:absolute;left:0;top:0;pointer-events:none}
-.cue{border-radius:999px;background:var(--surf);box-shadow:inset 0 0 0 1px var(--line);position:absolute;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:46px;height:46px;display:grid;place-items:center;color:var(--ink2)}
+.cue{border-radius:999px;background:var(--surf);box-shadow:inset 0 0 0 1px var(--line);position:absolute;left:50%;top:calc(var(--sv,100svh) - 68px - env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:46px;height:46px;display:grid;place-items:center;color:var(--ink2)}
 .cue svg{width:16px;height:16px}
 .pre .lk,.pre .tg,.pre .words .w,.pre .words .l2,.pre .cue{opacity:0}
 .js .pre .lk{animation:safe 0s 2.6s forwards}.js .pre .tg,.js .pre .words .w,.js .pre .words .l2,.js .pre .cue{animation:safe 0s 2.8s forwards}
@@ -168,7 +167,7 @@ button{font:inherit;color:inherit}
 /* ---------- the phone ---------- */
 .story{position:relative;height:var(--track,auto)}
 .story{overflow-anchor:none}
-.stage{position:sticky;top:0;height:var(--sv,100svh);overflow:hidden;will-change:transform}
+.stage{position:sticky;top:calc(-1 * var(--r0,0px));height:calc(var(--lv,100lvh) + var(--r0,0px));overflow:hidden;will-change:transform}
 .p3{position:absolute;left:var(--phL,0);top:var(--phT,0);width:var(--phW,280px);height:var(--phH,587px)}
 .ph,.edge{position:absolute;inset:0;will-change:transform}
 /* the phone's body, a slab drawn behind the face (its own transform, pushed back): seen as the edge while it is turned */
@@ -364,7 +363,7 @@ button{font:inherit;color:inherit}
 <section class="story" id="top" aria-label="Rematch">
   <div class="stage" id="stage">
     <div class="hero" id="hero">
-    <script>var d=document.documentElement;d.classList.add('js');if(/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)||/[?&]inner\b/.test(location.search))d.classList.add('inner');document.getElementById('hero').classList.add('pre')</script>
+    <script>var d=document.documentElement;d.classList.add('js');if(/[?&]inner\b/.test(location.search))d.classList.add('inner');document.getElementById('hero').classList.add('pre')</script>
     <div class="quake" id="quake">
       <div class="bloom" id="bloom" aria-hidden="true"></div>
       <div class="dust" id="dust" aria-hidden="true"></div>
@@ -544,6 +543,7 @@ button{font:inherit;color:inherit}
   const probe = D.createElement('div');
   probe.style.cssText = 'position:fixed;left:0;top:0;width:0;height:100svh;visibility:hidden;pointer-events:none';
   D.body.appendChild(probe);
+  const probeL = probe.cloneNode(); probeL.style.height = '100lvh'; D.body.appendChild(probeL);
   const hero = $('#hero'), bar = $('#bar');
   if (!reduced) hero.classList.add('pre');
 
@@ -943,10 +943,10 @@ button{font:inherit;color:inherit}
     const mk = (el, kf) => { const a = el.animate(kf, { duration: DUR, fill: 'both' }); a.pause(); a.currentTime = 0; return a; };
     const rise = G.sv * (calm ? 0.06 : 0.24);
     // it starts below the window, so nothing shows until it glides in (a short glide and a fade where less motion is asked)
-    const glide = calm ? G.sv * 0.12 : G.sv - G.phT + 60, Z = ' translateZ(' + (-G.depth).toFixed(1) + 'px)';
+    const glide = calm ? G.sv * 0.12 : G.lv - G.phT + 60, Z = ' translateZ(' + (-G.depth).toFixed(1) + 'px)';
     const up = 'translate3d(0,' + (-rise).toFixed(1) + 'px,0)', low = 'translate3d(0,' + glide.toFixed(1) + 'px,0)';
     scrub = {
-      hero: mk(hero, [{ offset: 0, transform: 'translate3d(0,0,0)', opacity: 1, easing: IO }, { offset: .5, transform: up, opacity: 0 }, { offset: 1, transform: up, opacity: 0 }]),
+      hero: mk(hero, [{ offset: 0, transform: 'translate3d(0,0,0)', opacity: 1, easing: G.R0 && !calm ? 'cubic-bezier(.3,.44,.6,1)' : IO }, { offset: .5, transform: up, opacity: 0 }, { offset: 1, transform: up, opacity: 0 }]),
       p3: mk(p3, [{ offset: 0, transform: low, opacity: calm ? 0 : 1 }, { offset: .12, transform: low, opacity: calm ? 0 : 1, easing: IO }, { offset: 1, transform: 'translate3d(0,0,0)', opacity: 1 }]),
       ph: mk(ph, [{ offset: 0, transform: pose(0), easing: IO }, { offset: .72, transform: pose(.72), easing: IO }, { offset: 1, transform: pose(1) }]),
       edge: mk(edge, [{ offset: 0, transform: pose(0) + Z, easing: IO }, { offset: .72, transform: pose(.72) + Z, easing: IO }, { offset: 1, transform: pose(1) + Z }]),
@@ -991,14 +991,15 @@ button{font:inherit;color:inherit}
     }
     // the turn runs from just before the stage pins to most of a view after; Today holds, then the steps
     // the opening leaves and the phone comes in over the first I of scroll, in one pinned frame; then the turn, then Today
-    const I = Math.round(sv * 0.7), T0 = Math.round(I * 0.8), T1 = T0 + Math.round(sv * (desk ? 0.85 : 0.8)), S0 = T1 + Math.round(sv * 0.35);
+    const lv = Math.max(sv, Math.round(probeL.getBoundingClientRect().height || sv)), touch = matchMedia('(hover: none) and (pointer: coarse)').matches || /[?&]touch\b/.test(location.search), R0 = touch ? Math.max(90, Math.round(sv * 0.12)) : 0;
+    const I = Math.round(sv * 0.7), T0 = R0 + Math.round(I * 0.8), T1 = T0 + Math.round(sv * (desk ? 0.85 : 0.8)), S0 = T1 + Math.round(sv * 0.35);
     const step = Math.round(sv * (desk ? 0.55 : 0.5)), tail = Math.round(sv * 0.25);
     // while it is turned away it stands in the middle of the window; facing you it makes room for the words
-    G = { vw, sv, desk, phW, phH, I, T0, T1, S0, step, persp: phH * 2.4, depth: phW / 430 * 46, lift: phH * 0.03, dx: desk ? (vw - phW) / 2 - phL : 0 };
+    G = { vw, sv, lv, R0, desk, phW, phH, I, T0, T1, S0, step, persp: phH * 2.4, depth: phW / 430 * 46, lift: phH * 0.03, dx: desk ? (vw - phW) / 2 - phL : 0 };
     lastP = -1; lastE = -1;
-    R.style.setProperty('--sv', sv + 'px');
-    story.style.setProperty('--track', (sv + S0 + N * step + tail) + 'px');
-    Object.entries({ '--phL': phL, '--phT': phT, '--phW': phW, '--phH': phH, '--persp': phH * 2.4, '--u': phW / 430, '--capL': capL, '--capT': capT, '--capW': capW })
+    R.style.setProperty('--sv', sv + 'px'); R.style.setProperty('--lv', lv + 'px'); R.style.setProperty('--r0', R0 + 'px');
+    story.style.setProperty('--track', (lv + S0 + N * step + tail) + 'px');
+    Object.entries({ '--phL': phL, '--phT': phT + R0, '--phW': phW, '--phH': phH, '--persp': phH * 2.4, '--u': phW / 430, '--capL': capL, '--capT': capT + R0, '--capW': capW })
       .forEach(([k, v]) => stage.style.setProperty(k, v + 'px'));
     const sy = getY();
     tops = { story: story.getBoundingClientRect().top + sy };
@@ -1015,12 +1016,12 @@ button{font:inherit;color:inherit}
     const sy = getY(), y = sy - tops.story;
     // the page holds still: the logo and its line fade and rise away while the phone glides up into the same frame
     // then the phone turns with the scroll
-    sceneTo(clamp(y / G.I), reduced ? 1 : clamp((y - G.T0) / (G.T1 - G.T0)));
+    sceneTo(clamp((y - G.R0) / G.I), reduced ? 1 : clamp((y - G.T0) / (G.T1 - G.T0)));
     const k = y < G.S0 ? 0 : Math.min(N, Math.floor((y - G.S0) / G.step) + 1);
     if (k !== cur) show(k);
     if (!warmed && y > G.I) warm();
     const line = sy + G.sv * 0.45;
-    let np = y > G.I * 0.6 ? 'features' : '';
+    let np = y > G.R0 + G.I * 0.6 ? 'features' : '';
     ['privacy', 'colors', 'faq'].forEach(id => { if (tops[id] < line) np = id; });
     if (tops.get < sy + G.sv * 0.6) np = '';
     if (np !== part) {
