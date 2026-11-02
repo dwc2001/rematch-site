@@ -154,7 +154,8 @@ button{font:inherit;color:inherit}
 .words .h{font:700 clamp(25px,3.1vw,42px)/1.12 "Mona Semi",sans-serif;letter-spacing:-.018em;color:var(--ink);text-wrap:balance}
 .words .w{display:inline-block}
 .words .l2{margin-top:clamp(10px,1.4vh,16px);font:400 clamp(17px,1.55vw,21px)/1.4 "Mona",sans-serif;color:var(--ink2)}
-.cue{position:absolute;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:46px;height:46px;display:grid;place-items:center;color:var(--ink2)}
+.hero .stone{position:absolute;left:0;top:0;pointer-events:none}
+.cue{border-radius:999px;background:var(--surf);box-shadow:inset 0 0 0 1px var(--line);position:absolute;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:46px;height:46px;display:grid;place-items:center;color:var(--ink2)}
 .cue svg{width:16px;height:16px}
 .pre .lk,.pre .tg,.pre .words .w,.pre .words .l2,.pre .cue{opacity:0}
 .js .pre .lk{animation:safe 0s 2.6s forwards}.js .pre .tg,.js .pre .words .w,.js .pre .words .l2,.js .pre .cue{animation:safe 0s 2.8s forwards}
@@ -365,6 +366,7 @@ button{font:inherit;color:inherit}
       <canvas id="ground" aria-hidden="true"></canvas>
       <canvas id="glow" aria-hidden="true"></canvas>
       <canvas id="fx" aria-hidden="true"></canvas>
+      <img class="stone" id="stone" alt="" aria-hidden="true" hidden>
       <div class="hero-in" id="heroin">
         <div class="lk" id="lk">
           <img class="lk-icon" id="lkicon" data-icon src="assets/icons/gym-amber-color.png" alt="" width="512" height="512">
@@ -379,7 +381,7 @@ button{font:inherit;color:inherit}
         </div>
       </div>
     </div>
-    <a class="cue glass" id="cue" href="#features" aria-label="See the features"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 6 8 10.5 12.5 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    <a class="cue" id="cue" href="#features" aria-label="See the features"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 6 8 10.5 12.5 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
   </div>
     <div class="p3" id="p3">
       <div class="edge" id="edge" aria-hidden="true"><i class="e1"></i><i class="e2"></i><i class="e3"></i></div>
@@ -770,8 +772,8 @@ button{font:inherit;color:inherit}
     const f = fractures({ seed: 1028, k, box, c: C, n: w < 700 ? 8 : 10, micro: w < 700 ? 5 : 8, rim: true, len: Math.min(w * 0.42, 540), b: { l: -40, r: w + 40, t: -40, b: h + 40 }, keep: [wr, cr] });
     const reach = Math.max(w, h) * 0.75;
     H = { w, h, box, C, k, f, reach, glowR: Math.max(170, box.w * 0.62) };
-    [cvG, cvL].forEach(cv => sizeCanvas(cv, w, h));
-    paintGround(cvG, f, C, reach); paintGlow(cvL, f, C, H.glowR);
+    [cvG, cvL].forEach(cv => { sizeCanvas(cv, w, h); cv.style.display = ''; }); stone.hidden = true;
+    paintGround(cvG, f, C, reach); paintGlow(cvL, f, C, H.glowR); bake();
     const bw = Math.max(box.w * 2.1, 520), bh = Math.max(box.h * 3.6, 380);
     Object.assign(bloom.style, { width: bw + 'px', height: bh + 'px', left: C.x - bw / 2 + 'px', top: C.y - bh / 2 + 'px' });
     const dw = box.w * 1.5, dh = box.h * 2.2;
@@ -779,8 +781,27 @@ button{font:inherit;color:inherit}
     cvL.style.opacity = done ? getComputedStyle(R).getPropertyValue('--glow-rest') : cvL.style.opacity;
     return H;
   }
-  function repaintGlow() { if (H) paintGlow(cvL, H.f, H.C, H.glowR); endPaint(); }
-  function repaint() { if (H) { paintGround(cvG, H.f, H.C, H.reach); paintGlow(cvL, H.f, H.C, H.glowR); } endPaint(); }
+  // once the smash is over the two canvases are baked into one still picture: an image paints into the opening's own
+  // layer, so its fade and rise move a single texture instead of two full-window canvas layers
+  const stone = $('#stone'); let stoneURL = '', bakeN = 0;
+  function bake() {
+    if (!H || !done || !cvG.width) return;
+    const n = ++bakeN, c = D.createElement('canvas'); c.width = cvG.width; c.height = cvG.height;
+    const x = c.getContext('2d'); x.drawImage(cvG, 0, 0); x.globalAlpha = restOf('--glow-rest'); x.drawImage(cvL, 0, 0);
+    c.toBlob(b => {
+      if (!b || n !== bakeN) return;
+      const u = URL.createObjectURL(b);
+      stone.onload = () => {
+        if (n !== bakeN) return;
+        stone.style.width = H.w + 'px'; stone.style.height = H.h + 'px'; stone.hidden = false;
+        cvG.style.display = cvL.style.display = cvF.style.display = dust.style.display = 'none';
+        if (stoneURL) URL.revokeObjectURL(stoneURL); stoneURL = u;
+      };
+      stone.src = u;
+    }, 'image/png');
+  }
+  function repaintGlow() { if (H) { paintGlow(cvL, H.f, H.C, H.glowR); bake(); } endPaint(); }
+  function repaint() { if (H) { paintGround(cvG, H.f, H.C, H.reach); paintGlow(cvL, H.f, H.C, H.glowR); bake(); } endPaint(); }
 
   // the chips knocked loose at the hit: thrown out and up, falling, gone in under a second (seeded, so a moment can be held)
   let chips = [];
@@ -820,6 +841,7 @@ button{font:inherit;color:inherit}
     hero.classList.remove('pre'); done = true; playing = false;
     setTimeout(() => { try { warm(); } catch (e) {} }, 500);
     cvL.style.opacity = restOf('--glow-rest'); bloom.style.opacity = ''; cancelAnimationFrame(chipRAF); cvF.width = cvF.height = 0;
+    setTimeout(() => { try { bake(); } catch (e) {} }, 60);
   }
   function finish() { anims.forEach(a => { try { a.finish(); a.cancel(); } catch (e) {} }); anims.length = 0; settleHero(); }
   function smash() {
