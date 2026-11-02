@@ -69,8 +69,9 @@
 
 html{background:var(--g);scrollbar-width:none;-webkit-text-size-adjust:100%}
 html::-webkit-scrollbar,body::-webkit-scrollbar{display:none}
-body{margin:0;background:var(--g);color:var(--ink);font:400 17px/1.4 "Mona",system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:clip;transition:background-color .35s ease,color .35s ease}
-main,footer{position:relative;z-index:1;overflow-x:clip}
+body{margin:0;background:var(--g);color:var(--ink);font:400 17px/1.4 "Mona",system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;transition:background-color .35s ease,color .35s ease}
+main,footer{position:relative;z-index:1}
+footer,.part{overflow-x:clip}
 img{display:block;max-width:none}
 h1,h2,h3,p,ul{margin:0}
 ul{padding:0;list-style:none}
@@ -81,7 +82,7 @@ button{font:inherit;color:inherit}
 .instant *,.instant *::before,.instant *::after{transition:none!important}
 
 /* ---------- the light, fixed at the top of the window like the app's ---------- */
-.sky{position:fixed;inset:0;z-index:0;pointer-events:none;transition:opacity .6s ease;
+.sky{position:fixed;inset:0 0 auto;height:100lvh;z-index:0;pointer-events:none;transition:opacity .6s ease;
   background:radial-gradient(88% 54% at 18% -12%,rgb(var(--acc-rgb) / var(--c0)) 0,rgb(var(--acc-rgb) / var(--c1)) 36%,rgb(var(--acc-rgb) / var(--c2)) 64%,rgb(var(--acc-rgb) / 0) 86%),
     linear-gradient(rgb(var(--acc-rgb) / var(--ctop)),rgb(var(--acc-rgb) / 0) 50%)}
 
@@ -161,7 +162,8 @@ button{font:inherit;color:inherit}
 
 /* ---------- the phone ---------- */
 .story{position:relative;height:var(--track,auto)}
-.stage{position:sticky;top:0;height:var(--sv,100svh);overflow:hidden}
+.story{overflow-anchor:none}
+.stage{position:sticky;top:0;height:var(--sv,100svh);overflow:hidden;will-change:transform}
 .p3{position:absolute;left:var(--phL,0);top:var(--phT,0);width:var(--phW,280px);height:var(--phH,587px)}
 .ph,.edge{position:absolute;inset:0;will-change:transform}
 /* the phone's body, a slab drawn behind the face (its own transform, pushed back): seen as the edge while it is turned */
@@ -184,18 +186,22 @@ button{font:inherit;color:inherit}
 .island{position:absolute;z-index:9;top:calc(var(--du)*11.6);left:calc(var(--du)*138);width:calc(var(--du)*126);height:calc(var(--du)*37);border-radius:calc(var(--du)*18.5);background:#000}
 .scr{position:absolute;inset:0;z-index:2;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .3s cubic-bezier(.3,0,.4,1)}
 .scr.on{opacity:1}
+#screen .scr{will-change:opacity}
 .glare{position:absolute;z-index:8;left:-60%;top:-20%;width:220%;height:140%;pointer-events:none;opacity:0;will-change:transform,opacity;
   background:linear-gradient(112deg,rgba(255,255,255,0) 40%,rgba(255,255,255,.11) 48%,rgba(255,255,255,.03) 53%,rgba(255,255,255,0) 58%)}
 .caps{position:absolute;left:var(--capL,auto);top:var(--capT,auto);width:var(--capW,auto);opacity:0;transition:opacity .4s ease;pointer-events:none}
 .desk .caps{transform:translateY(-50%)}
 .stage.turned .caps{opacity:1}
+.stage.turned .glare{display:none}
 .ticks{display:flex;gap:6px;margin-bottom:22px;height:4px}
-.ticks i{width:10px;height:4px;border-radius:2px;background:var(--tick);transition:width .3s cubic-bezier(.2,.9,.3,1),background-color .3s ease}
+.ticks i{width:10px;height:4px;border-radius:2px;background:var(--tick);transform-origin:0 50%;transition:transform .3s cubic-bezier(.2,.9,.3,1),background-color .3s ease}
 .ticks i.done{background:var(--ink2)}
-.ticks i.on{width:30px;background:var(--accw)}
+.ticks i.on{transform:scaleX(3);background:var(--accw)}
+.ticks i.after{transform:translateX(20px)}
 .capstack{display:grid}
 .cap{grid-area:1/1;opacity:0;transform:translateY(10px);transition:opacity .3s cubic-bezier(.3,0,.4,1),transform .3s cubic-bezier(.2,.9,.3,1)}
 .cap.on{opacity:1;transform:none}
+.cap{will-change:opacity,transform}
 .cap h2{font:700 42px/1.05 "Mona Semi",sans-serif;letter-spacing:-.025em;color:var(--ink);text-wrap:balance}
 .cap p{margin-top:14px;font:400 19px/1.4 "Mona",sans-serif;color:var(--ink2);max-width:30ch;text-wrap:pretty}
 .phone .ticks{margin-bottom:14px}
@@ -980,7 +986,6 @@ button{font:inherit;color:inherit}
   let swapTimer = 0;
   function show(k) {
     const prev = cur; cur = k;
-    stage.dataset.step = k;
     const incoming = shots[k], outgoing = shots[prev];
     shots.forEach(el => { el.style.zIndex = el === incoming ? 4 : el === outgoing ? 3 : 2; });
     if (incoming) incoming.classList.add('on');
@@ -989,7 +994,7 @@ button{font:inherit;color:inherit}
     if (R.classList.contains('instant')) settle();
     else (incoming && incoming.decode ? incoming.decode().catch(() => {}) : Promise.resolve()).then(() => { if (cur === k) swapTimer = setTimeout(settle, 320); });
     capEls.forEach(c => c.classList.toggle('on', +c.dataset.i === k));
-    ticks.forEach((t, i) => { t.classList.toggle('on', i === k); t.classList.toggle('done', i < k); });
+    ticks.forEach((t, i) => { t.classList.toggle('on', i === k); t.classList.toggle('done', i < k); t.classList.toggle('after', i > k); });
   }
   let ticking = false;
   addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(() => { ticking = false; update(); }); } }, { passive: true });
