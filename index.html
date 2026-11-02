@@ -162,30 +162,29 @@ button{font:inherit;color:inherit}
 /* ---------- the phone ---------- */
 .story{position:relative;height:var(--track,auto)}
 .stage{position:sticky;top:0;height:var(--sv,100svh);overflow:hidden}
-.p3{position:absolute;left:var(--phL,0);top:var(--phT,0);width:var(--phW,280px);height:var(--phH,587px);perspective:var(--persp,1800px)}
-.ph{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform}
-.device{--du:var(--u,.65px);position:relative;width:calc(var(--du)*430);height:calc(var(--du)*902);padding:calc(var(--du)*11.6);box-sizing:border-box;transform-style:preserve-3d;
+.p3{position:absolute;left:var(--phL,0);top:var(--phT,0);width:var(--phW,280px);height:var(--phH,587px)}
+.ph,.edge{position:absolute;inset:0;will-change:transform}
+/* the phone's body, a slab drawn behind the face (its own transform, pushed back): seen as the edge while it is turned */
+.edge{--du:var(--u,.65px);border-radius:calc(var(--du)*69);background:linear-gradient(90deg,var(--side) 0,var(--side2) 10%,var(--side2) 90%,var(--side) 100%)}
+.edge i{position:absolute;left:calc(var(--du)*-1.6);width:calc(var(--du)*4);border-radius:calc(var(--du)*2);background:linear-gradient(90deg,var(--m4),var(--m1) 50%,var(--m3))}
+.edge .e1{top:calc(var(--du)*196);height:calc(var(--du)*34)}.edge .e2{top:calc(var(--du)*262);height:calc(var(--du)*60)}.edge .e3{top:calc(var(--du)*338);height:calc(var(--du)*60)}
+.device{--du:var(--u,.65px);position:relative;width:calc(var(--du)*430);height:calc(var(--du)*902);padding:calc(var(--du)*11.6);box-sizing:border-box;
   border:calc(var(--du)*2.4) solid transparent;border-radius:calc(var(--du)*69);
   background:linear-gradient(var(--bezel),var(--bezel)) padding-box,
     linear-gradient(158deg,var(--m1) 0,var(--m2) 14%,var(--m3) 38%,var(--m2) 58%,var(--m4) 80%,var(--m3) 100%) border-box;
   box-shadow:inset 0 0 0 calc(var(--du)*1) rgba(255,255,255,.07),inset 0 calc(var(--du)*1.4) calc(var(--du)*1.4) rgba(255,255,255,.05),var(--phone-drop)}
 /* the body behind the face: seen as the phone's edge while it is turned */
-.device .back{position:absolute;left:calc(var(--du)*-2.4);top:calc(var(--du)*-2.4);right:calc(var(--du)*-2.4);bottom:calc(var(--du)*-2.4);border-radius:calc(var(--du)*69);
-  background:linear-gradient(90deg,var(--side) 0,var(--side2) 9%,var(--side2) 91%,var(--side) 100%);transform:translateZ(calc(var(--du)*-44))}
-.device .back.mid{transform:translateZ(calc(var(--du)*-22));background:linear-gradient(90deg,var(--m3) 0,var(--side2) 7%,var(--side2) 93%,var(--m3) 100%)}
-.device .key{position:absolute;width:calc(var(--du)*18);border-radius:calc(var(--du)*3);transform-origin:0 50%;
-  background:linear-gradient(90deg,var(--m4),var(--m1) 45%,var(--m3) 70%,var(--m4))}
-.device .k1,.device .k2,.device .k3{left:calc(var(--du)*-3.4);transform:translateZ(calc(var(--du)*-13)) rotateY(90deg)}
-.device .k1{top:calc(var(--du)*196);height:calc(var(--du)*34)}
-.device .k2{top:calc(var(--du)*262);height:calc(var(--du)*60)}
-.device .k3{top:calc(var(--du)*338);height:calc(var(--du)*60)}
-.device .k4{right:calc(var(--du)*-3.4);top:calc(var(--du)*290);height:calc(var(--du)*94);transform-origin:100% 50%;transform:translateZ(calc(var(--du)*-13)) rotateY(-90deg)}
+.device .key{position:absolute;width:calc(var(--du)*3.2);border-radius:calc(var(--du)*2);background:linear-gradient(90deg,var(--m4),var(--m3) 45%,var(--m1) 60%,var(--m2))}
+.device .k1{left:calc(var(--du)*-5.6);top:calc(var(--du)*196);height:calc(var(--du)*34)}
+.device .k2{left:calc(var(--du)*-5.6);top:calc(var(--du)*262);height:calc(var(--du)*60)}
+.device .k3{left:calc(var(--du)*-5.6);top:calc(var(--du)*338);height:calc(var(--du)*60)}
+.device .k4{right:calc(var(--du)*-5.6);top:calc(var(--du)*290);height:calc(var(--du)*94)}
 .flat .key{display:none}
 .screen{position:relative;width:100%;height:100%;border-radius:calc(var(--du)*55);overflow:hidden;background:var(--g);isolation:isolate}
 .island{position:absolute;z-index:9;top:calc(var(--du)*11.6);left:calc(var(--du)*138);width:calc(var(--du)*126);height:calc(var(--du)*37);border-radius:calc(var(--du)*18.5);background:#000}
 .scr{position:absolute;inset:0;z-index:2;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .3s cubic-bezier(.3,0,.4,1)}
 .scr.on{opacity:1}
-.glare{position:absolute;z-index:8;left:-60%;top:-20%;width:220%;height:140%;pointer-events:none;opacity:0;
+.glare{position:absolute;z-index:8;left:-60%;top:-20%;width:220%;height:140%;pointer-events:none;opacity:0;will-change:transform,opacity;
   background:linear-gradient(112deg,rgba(255,255,255,0) 40%,rgba(255,255,255,.11) 48%,rgba(255,255,255,.03) 53%,rgba(255,255,255,0) 58%)}
 .caps{position:absolute;left:var(--capL,auto);top:var(--capT,auto);width:var(--capW,auto);opacity:0;transition:opacity .4s ease;pointer-events:none}
 .desk .caps{transform:translateY(-50%)}
@@ -377,9 +376,9 @@ button{font:inherit;color:inherit}
     <a class="cue glass" id="cue" href="#features" aria-label="See the features"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 6 8 10.5 12.5 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
   </div>
     <div class="p3" id="p3">
+      <div class="edge" id="edge" aria-hidden="true"><i class="e1"></i><i class="e2"></i><i class="e3"></i></div>
       <div class="ph" id="ph">
         <div class="device">
-          <i class="back"></i><i class="back mid"></i>
           <i class="key k1"></i><i class="key k2"></i><i class="key k3"></i><i class="key k4"></i>
           <div class="screen" id="screen">
             <img class="scr on" data-s="today" data-i="0" src="assets/screens/today-dark.jpg" alt="Today: Good evening, Legs, five lifts, one Start workout button, and the last workout, Push, with Chest Press 185 by 11, a record." decoding="async" width="780" height="1696">
@@ -884,7 +883,7 @@ button{font:inherit;color:inherit}
   (D.fonts ? D.fonts.ready : Promise.resolve()).then(() => { try { endPaint(); } catch (e) {} });
 
   // ---------- the phone: it turns to face you, then walks through the app ----------
-  const stage = $('#stage'), p3 = $('#p3'), ph = $('#ph'), story = $('#top'), glare = $('#glare');
+  const stage = $('#stage'), p3 = $('#p3'), ph = $('#ph'), edge = $('#edge'), story = $('#top'), glare = $('#glare');
   const shots = $$('#screen .scr'), capEls = $$('.cap'), ticks = $$('.ticks i'), N = 6;
   let G = null, lastW = 0, tops = {};
   // the turn follows the scroll: the pose he showed (the phone turned so its left edge faces you, leaning a little, his
@@ -895,11 +894,14 @@ button{font:inherit;color:inherit}
     const K = [[G.dx, 0, 8, 33, 9], [G.dx * 0.06, -G.lift, -0.8, -3.5, -1.2], [0, 0, 0, 0, 0]], M = 0.72;
     const a = p < M ? 0 : 1, e = sm(clamp(a ? (p - M) / (1 - M) : p / M));
     const v = K[a].map((x, i) => x + (K[a + 1][i] - x) * e);
-    return 'translate3d(' + v[0].toFixed(1) + 'px,' + v[1].toFixed(1) + 'px,0) rotateZ(' + v[2].toFixed(2) + 'deg) rotateY(' + v[3].toFixed(2) + 'deg) rotateX(' + v[4].toFixed(2) + 'deg)';
+    return 'perspective(' + G.persp.toFixed(0) + 'px) translate3d(' + v[0].toFixed(1) + 'px,' + v[1].toFixed(1) + 'px,0) rotateZ(' + v[2].toFixed(2) + 'deg) rotateY(' + v[3].toFixed(2) + 'deg) rotateX(' + v[4].toFixed(2) + 'deg)';
   }
   function turnTo(p) {
     if (p === lastP) return; lastP = p;
-    ph.style.transform = pose(p);
+    const t = pose(p);
+    ph.style.transform = t;
+    edge.style.transform = t + ' translateZ(' + (-G.depth).toFixed(1) + 'px)';
+    edge.style.visibility = p >= 0.999 ? 'hidden' : '';
     // a catch of light runs across the glass while it turns
     const gp = clamp((p - 0.1) / 0.8);
     glare.style.opacity = gp > 0 && gp < 1 ? Math.sin(Math.PI * gp).toFixed(3) : 0;
@@ -932,7 +934,7 @@ button{font:inherit;color:inherit}
     const I = Math.round(sv * 0.7), T0 = Math.round(I * 0.8), T1 = T0 + Math.round(sv * (desk ? 0.85 : 0.8)), S0 = T1 + Math.round(sv * 0.35);
     const step = Math.round(sv * (desk ? 0.55 : 0.5)), tail = Math.round(sv * 0.25);
     // while it is turned away it stands in the middle of the window; facing you it makes room for the words
-    G = { vw, sv, desk, phW, phH, I, T0, T1, S0, step, lift: phH * 0.03, dx: desk ? (vw - phW) / 2 - phL : 0 };
+    G = { vw, sv, desk, phW, phH, I, T0, T1, S0, step, persp: phH * 2.4, depth: phW / 430 * 46, lift: phH * 0.03, dx: desk ? (vw - phW) / 2 - phL : 0 };
     lastP = -1; lastE = -1;
     R.style.setProperty('--sv', sv + 'px');
     story.style.setProperty('--track', (sv + S0 + N * step + tail) + 'px');
