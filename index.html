@@ -68,7 +68,11 @@
 }
 
 html{background:var(--g);scrollbar-width:none;-webkit-text-size-adjust:100%}
-html::-webkit-scrollbar,body::-webkit-scrollbar{display:none}
+html::-webkit-scrollbar,body::-webkit-scrollbar,#page::-webkit-scrollbar{display:none}
+/* on iPhone and iPad the page scrolls inside its own full-window frame: Safari's toolbar then never shrinks or grows mid-swipe,
+   which on iOS 26 shifts a pinned scene by about 10 px (WebKit 297779) right where the opening leaves */
+.inner,.inner body{height:100%;overflow:hidden;overscroll-behavior:none}
+.inner #page{position:fixed;inset:0;z-index:1;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;scrollbar-width:none}
 body{margin:0;background:var(--g);color:var(--ink);font:400 17px/1.4 "Mona",system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;transition:background-color .35s ease,color .35s ease}
 main,footer{position:relative;z-index:1}
 footer,.part{overflow-x:clip}
@@ -353,13 +357,14 @@ button{font:inherit;color:inherit}
   </div>
 </header>
 
+<div id="page">
 <main>
 
 
 <section class="story" id="top" aria-label="Rematch">
   <div class="stage" id="stage">
     <div class="hero" id="hero">
-    <script>document.documentElement.classList.add('js');document.getElementById('hero').classList.add('pre')</script>
+    <script>var d=document.documentElement;d.classList.add('js');if(/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)||/[?&]inner\b/.test(location.search))d.classList.add('inner');document.getElementById('hero').classList.add('pre')</script>
     <div class="quake" id="quake">
       <div class="bloom" id="bloom" aria-hidden="true"></div>
       <div class="dust" id="dust" aria-hidden="true"></div>
@@ -513,6 +518,7 @@ button{font:inherit;color:inherit}
     <p class="fine">&copy; 2026 Rematch. Made for iPhone. Requires iOS&nbsp;26.</p>
   </div>
 </footer>
+</div>
 
 <div class="toast glass" id="toast" role="status" aria-live="polite"><img data-icon src="assets/icons/gym-amber-color.png" alt="" width="512" height="512" loading="lazy"><span id="toastmsg"></span></div>
 
@@ -521,13 +527,16 @@ button{font:inherit;color:inherit}
   const D = document, R = D.documentElement;
   const $ = s => D.querySelector(s), $$ = s => [...D.querySelectorAll(s)];
   R.classList.add('js');
+  // the scroller: the window, or on iPhone and iPad the page's own frame
+  const SC = R.classList.contains('inner') ? D.getElementById('page') : null, scroller = SC || window;
+  const getY = () => SC ? SC.scrollTop : scrollY, goY = o => scroller.scrollTo(o);
   // The motion plays on every device. Where the system asks for less motion it is gentler, not gone: no jolt, no flying
   // chips, no parallax, a shorter drop (his Mac has Reduce Motion on and he wants the computer to show it, 2026-11-02)
   let calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
   let reduced = false;
   // a refresh starts at the top, so the smash is seen every time
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-  if (!location.hash) scrollTo(0, 0);
+  if (!location.hash) goY({ top: 0 });
   const mqLight = matchMedia('(prefers-color-scheme: light)');
   const RGB = { amber: [242, 163, 58], coral: [255, 130, 112], aqua: [63, 208, 190], ice: [183, 203, 255] };
   let acc = 'amber', chosen = null;
@@ -991,7 +1000,7 @@ button{font:inherit;color:inherit}
     story.style.setProperty('--track', (sv + S0 + N * step + tail) + 'px');
     Object.entries({ '--phL': phL, '--phT': phT, '--phW': phW, '--phH': phH, '--persp': phH * 2.4, '--u': phW / 430, '--capL': capL, '--capT': capT, '--capW': capW })
       .forEach(([k, v]) => stage.style.setProperty(k, v + 'px'));
-    const sy = scrollY;
+    const sy = getY();
     tops = { story: story.getBoundingClientRect().top + sy };
     ['privacy', 'colors', 'faq', 'get'].forEach(id => { tops[id] = $('#' + id).getBoundingClientRect().top + sy; });
     G.phT = phT;
@@ -1003,7 +1012,7 @@ button{font:inherit;color:inherit}
   function warm() { if (warmed) return; warmed = true; shots.forEach(im => { im.loading = 'eager'; if (im.decode) im.decode().catch(() => {}); }); }
   const pills = $$('.sects a, .menu a'), menuLbl = $('#menulbl'), NAMES = { features: 'Features', privacy: 'Privacy', colors: 'Colors', faq: 'FAQ' };
   function update() {
-    const sy = scrollY, y = sy - tops.story;
+    const sy = getY(), y = sy - tops.story;
     // the page holds still: the logo and its line fade and rise away while the phone glides up into the same frame
     // then the phone turns with the scroll
     sceneTo(clamp(y / G.I), reduced ? 1 : clamp((y - G.T0) / (G.T1 - G.T0)));
@@ -1035,7 +1044,7 @@ button{font:inherit;color:inherit}
     ticks.forEach((t, i) => { t.classList.toggle('on', i === k); t.classList.toggle('done', i < k); t.classList.toggle('after', i > k); });
   }
   let ticking = false;
-  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(() => { ticking = false; update(); }); } }, { passive: true });
+  scroller.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(() => { ticking = false; update(); }); } }, { passive: true });
   let rz = 0;
   addEventListener('resize', () => {
     if (R.clientWidth === lastW) return;
@@ -1054,13 +1063,13 @@ button{font:inherit;color:inherit}
   D.addEventListener('keydown', e => { if (e.key === 'Escape' && !menu.hidden) { closeMenu(); menuBtn.focus(); } });
   const go2 = (id, ev) => {
     ev.preventDefault(); closeMenu();
-    const top = id === 'features' ? stepTop(0) : id === 'top' ? 0 : $('#' + id).getBoundingClientRect().top + scrollY - (id === 'get' ? 0 : 70);
-    scrollTo({ top, behavior: calm ? 'auto' : 'smooth' });
+    const top = id === 'features' ? stepTop(0) : id === 'top' ? 0 : $('#' + id).getBoundingClientRect().top + getY() - (id === 'get' ? 0 : 70);
+    goY({ top, behavior: calm ? 'auto' : 'smooth' });
     history.replaceState(null, '', id === 'top' ? location.pathname + location.search : '#' + id);
   };
   $$('a[href^="#"]:not([data-toast])').forEach(a => a.addEventListener('click', ev => go2(a.getAttribute('href').slice(1) || 'top', ev)));
   $$('.qa details').forEach(d => d.addEventListener('toggle', () => { layout(); update(); }));
-  if (location.hash === '#features') requestAnimationFrame(() => scrollTo({ top: stepTop(0), behavior: 'auto' }));
+  if (location.hash === '#features') requestAnimationFrame(() => goY({ top: stepTop(0), behavior: 'auto' }));
 
   // ---------- the things not built yet say so ----------
   const toastEl = $('#toast'), toastMsg = $('#toastmsg'); let toastT = 0;
@@ -1097,16 +1106,17 @@ button{font:inherit;color:inherit}
     endIntro() { go(); finish(); return 'intro ended'; },
     introAt(ms) { if (reduced) reduced = false; if (!begun) { begun = true; smash(); } anims.forEach(x => { x.pause(); x.currentTime = ms; }); cancelAnimationFrame(chipRAF); drawChips(ms - 400); return anims.length; },
     motion() { reduced = false; calm = false; layout(); return update(); },
-    turnAt(p) { R.classList.add('instant'); scrollTo({ top: tops.story + G.T0 + p * (G.T1 - G.T0), behavior: 'instant' }); return update(); },
-    async setStep(k) { R.classList.add('instant'); scrollTo({ top: stepTop(k), behavior: 'instant' }); const r = update(); const im = shots[k]; if (im) { im.loading = 'eager'; try { await im.decode(); } catch (e) {} } return r; },
-    scrollToPart(id) { R.classList.add('instant'); scrollTo({ top: $('#' + id).getBoundingClientRect().top + scrollY - 70, behavior: 'instant' }); return update(); },
+    turnAt(p) { R.classList.add('instant'); goY({ top: tops.story + G.T0 + p * (G.T1 - G.T0), behavior: 'instant' }); return update(); },
+    async setStep(k) { R.classList.add('instant'); goY({ top: stepTop(k), behavior: 'instant' }); const r = update(); const im = shots[k]; if (im) { im.loading = 'eager'; try { await im.decode(); } catch (e) {} } return r; },
+    scrollToPart(id) { R.classList.add('instant'); goY({ top: $('#' + id).getBoundingClientRect().top + getY() - 70, behavior: 'instant' }); return update(); },
     async pickAccent(a) { R.classList.add('instant'); applyAccent(a); await new Promise(r => setTimeout(r, 400)); return a; },
     setMode(m) { applyMode(m); return m; },
     openMenu() { menu.hidden = false; menuBtn.setAttribute('aria-expanded', 'true'); return true; },
     toast(m) { toastEl.style.transition = 'none'; toast(m || 'Rematch is in testing. Coming soon to the App Store.'); return true; },
     // decode every picture in view (webshot paints before a lazy or async image is ready)
     async settle() { const im = $$('img').filter(i => { const r = i.getBoundingClientRect(); return r.bottom > -50 && r.top < innerHeight + 50 && getComputedStyle(i).opacity !== '0'; }); await Promise.all(im.map(i => { i.loading = 'eager'; return (i.decode ? i.decode() : Promise.resolve()).catch(() => {}); })); await new Promise(r => setTimeout(r, 120)); return im.length; },
-    state() { return Object.assign({}, G, { at: cur, part, turned, calm, acc, mode: mode(), struck, cracks: H && H.f.cracks.length }); }
+    scrollTo(y) { goY({ top: y, behavior: 'instant' }); return update(); },
+    state() { return Object.assign({}, G, { at: cur, part, turned, calm, inner: !!SC, y: getY(), acc, mode: mode(), struck, cracks: H && H.f.cracks.length }); }
   };
 })();
 </script>
