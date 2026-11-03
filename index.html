@@ -231,6 +231,15 @@ button{font:inherit;color:inherit}
 .js .nots .x{color:var(--ink);transition:color .3s ease}.js .nots .x.cut{color:var(--ink2)}
 .just{margin-top:30px;font:600 clamp(18px,1.7vw,22px)/1.3 "Mona Semi",sans-serif;color:var(--ink)}
 
+.reel{padding:clamp(56px,9vh,110px) 0 clamp(20px,4vh,50px);text-align:center}
+.reel .mid{max-width:none}
+.reel-box{position:relative;margin:36px auto 0;width:100%;max-width:720px;aspect-ratio:1/1;border-radius:clamp(22px,3vw,34px);overflow:hidden;background:#ECE9E4;
+  box-shadow:0 0 0 1px var(--rule),0 40px 90px -50px rgba(0,0,0,.55)}
+.reel-box video{display:block;width:100%;height:100%;object-fit:cover}
+.reel-ctl{position:absolute;right:14px;bottom:14px;display:flex;gap:8px}
+.reel-btn{all:unset;box-sizing:border-box;width:44px;height:44px;display:grid;place-items:center;border-radius:999px;cursor:pointer;color:var(--ink)}
+.reel-btn svg{width:20px;height:20px}
+.reel-btn:focus-visible{outline:2px solid var(--accw);outline-offset:2px}
 .more{padding:clamp(70px,10vh,120px) 0}
 .feat{display:grid;grid-template-columns:repeat(3,1fr);gap:0 48px;margin-top:44px}
 .feat li{padding:26px 0 28px;border-top:1px solid var(--rule)}
@@ -418,6 +427,21 @@ button{font:inherit;color:inherit}
         <div class="cap" data-i="4"><h2>See what you hit.</h2></div>
         <div class="cap" data-i="5"><h2>Sets per muscle, per week.</h2><p>One lift counts for each muscle it works.</p></div>
         <div class="cap" data-i="6"><h2>Weigh in when you want.</h2></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="part reel" id="reel" aria-labelledby="reel-h">
+  <div class="wrap">
+    <h2 class="mid" id="reel-h">Start to finish.</h2>
+    <div class="reel-box">
+      <video id="reelv" muted loop playsinline autoplay preload="metadata" poster="assets/video/rematch-reel.jpg" aria-label="A short film of Rematch: Start workout, the rest timer, 11 reps at 185 so next time is 190, the plates a side, swipe up to finish, the summary, the Chest Press graph, sets per muscle, picking a color, and Stays on this phone.">
+        <source src="assets/video/rematch-reel.mp4" type="video/mp4">
+      </video>
+      <div class="reel-ctl">
+        <button class="reel-btn glass" id="reelSound" type="button" aria-pressed="false" aria-label="Sound on"></button>
+        <button class="reel-btn glass" id="reelPlay" type="button" aria-pressed="true" aria-label="Pause"></button>
       </div>
     </div>
   </div>
@@ -1059,6 +1083,28 @@ button{font:inherit;color:inherit}
   const relayout = () => { layout(); update(); };
   if (D.fonts) D.fonts.ready.then(relayout);
   addEventListener('load', relayout);
+
+  // ---------- the film: it plays while it is in view and pauses when it leaves; the sound only when asked ----------
+  const rv = $('#reelv'), rPlay = $('#reelPlay'), rSound = $('#reelSound');
+  if (rv && rPlay && rSound) {
+    const IC = {
+      pause: '<svg viewBox="0 0 20 20" aria-hidden="true"><rect x="5" y="4" width="3.4" height="12" rx="1.2" fill="currentColor"/><rect x="11.6" y="4" width="3.4" height="12" rx="1.2" fill="currentColor"/></svg>',
+      play: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6.5 4.6v10.8l8.8-5.4Z" fill="currentColor" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>',
+      mute: '<svg viewBox="0 0 20 20" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 7.6h2.9L10.5 4v12l-4.1-3.6H3.5Z"/><path d="M13.6 7.8l3.8 4.4M17.4 7.8l-3.8 4.4"/></g></svg>',
+      sound: '<svg viewBox="0 0 20 20" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 7.6h2.9L10.5 4v12l-4.1-3.6H3.5Z"/><path d="M13.4 7.4a3.7 3.7 0 0 1 0 5.2M15.6 5.3a6.7 6.7 0 0 1 0 9.4"/></g></svg>'
+    };
+    let userPaused = false, inView = false;
+    const sync = () => { const go = inView && !userPaused; if (go && rv.paused) { const p = rv.play(); if (p) p.catch(() => {}); } else if (!go && !rv.paused) rv.pause(); };
+    const paint = () => {
+      rPlay.innerHTML = userPaused ? IC.play : IC.pause; rPlay.setAttribute('aria-label', userPaused ? 'Play' : 'Pause'); rPlay.setAttribute('aria-pressed', userPaused ? 'false' : 'true');
+      rSound.innerHTML = rv.muted ? IC.mute : IC.sound; rSound.setAttribute('aria-label', rv.muted ? 'Sound on' : 'Sound off'); rSound.setAttribute('aria-pressed', rv.muted ? 'false' : 'true');
+    };
+    rPlay.addEventListener('click', () => { userPaused = !userPaused; paint(); sync(); });
+    rSound.addEventListener('click', () => { rv.muted = !rv.muted; if (!rv.muted && userPaused) { userPaused = false; } paint(); sync(); });
+    paint();
+    if ('IntersectionObserver' in window) new IntersectionObserver(es => es.forEach(e => { inView = e.isIntersecting && e.intersectionRatio >= 0.3; sync(); }), { threshold: [0, 0.3, 0.6] }).observe(rv);
+    else { inView = true; sync(); }
+  }
 
   // ---------- the bar: sections, the menu on a phone ----------
   const menuBtn = $('#menubtn'), menu = $('#menu');
